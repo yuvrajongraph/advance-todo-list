@@ -45,16 +45,16 @@ const createTodoItem = async (req, res) => {
 
 const getAllTodoItems = async (req, res) => {
   try {
-    const query = req.query;
+    const query = {};
 
-    // if no query is given to api
-    if (Object.keys(req.query).length === 0) {
-      const data = await Todo.find({});
-      return commonErrorHandler(req, res, { data, quote: "OK" }, 200);
+    for (const key in req.query) {
+      if (req.query.hasOwnProperty(key)) {
+        query[key] = req.query[key];
+      }
     }
 
-    // if apecific category given in query
-    const data = await Todo.find({ category: query.category });
+    // filter the data according to dynamic field given in request query
+    const data = await Todo.find(query);
 
     //final response
     return commonErrorHandler(req, res, { data, quote: "OK" }, 200);
