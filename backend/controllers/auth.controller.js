@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const { commonErrorHandler } = require("../helper/errorHandler.helper");
-const {  asyncHandler } = require("../middlewares/asyncHandler.middleware");
+const { asyncHandler } = require("../middlewares/asyncHandler.middleware");
 
 // @desc    Signup user
 // @route   POST /api/auth/signup
@@ -53,7 +53,7 @@ const userSignUp = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/signin
 // @access  Public
 
-const userSignIn = asyncHandler (async (req, res) => {
+const userSignIn = asyncHandler(async (req, res) => {
   try {
     const body = req.body;
     const userWithEmail = await User.findOne({ email: body.email });

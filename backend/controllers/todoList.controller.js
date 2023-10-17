@@ -68,7 +68,7 @@ const getAllTodoItems = asyncHandler(async (req, res) => {
 // @route   GET  /api/todo-list/:id
 // @access  Private
 
-const getSingleTodoItem =asyncHandler(async (req, res) => {
+const getSingleTodoItem = asyncHandler(async (req, res) => {
   try {
     const params = req.params;
 
@@ -86,7 +86,7 @@ const getSingleTodoItem =asyncHandler(async (req, res) => {
 // @route   PATCH  /api/todo-list/:id
 // @access  Private
 
-const updateTodoItem =asyncHandler(async (req, res) => {
+const updateTodoItem = asyncHandler(async (req, res) => {
   try {
     const params = req.params;
     const body = req.body;
@@ -118,7 +118,7 @@ const updateTodoItem =asyncHandler(async (req, res) => {
 // @route   DELETE  /api/todo-list/:id
 // @access  Private
 
-const deleteTodoItem =asyncHandler(async (req, res) => {
+const deleteTodoItem = asyncHandler(async (req, res) => {
   try {
     const params = req.params;
 
