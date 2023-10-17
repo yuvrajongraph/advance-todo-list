@@ -7,22 +7,14 @@ const { asyncHandler } = require("../middlewares/asyncHandler.middleware");
 // @access  Private
 
 const createTodoItem = asyncHandler(async (req, res) => {
-  try {
     const body = req.body;
-
+    
+    req.body.userId = req.user._id;
     // create a schema todo item
     const todo = new Todo(body);
 
-    // if something in syntax goes wrong
-    if (!todo) {
-      throw new Error();
-    }
-
     // save todo item in DB
     const data = await todo.save();
-    if (!data) {
-      throw new Error();
-    }
 
     // final response
     return commonErrorHandler(
@@ -31,9 +23,7 @@ const createTodoItem = asyncHandler(async (req, res) => {
       { data, quote: "Item has been created" },
       201
     );
-  } catch (error) {
-    return commonErrorHandler(req, res, null, 500, error);
-  }
+
 });
 
 // @desc    Get All Todo Items
@@ -45,7 +35,7 @@ const createTodoItem = asyncHandler(async (req, res) => {
 // @access  Private
 
 const getAllTodoItems = asyncHandler(async (req, res) => {
-  try {
+
     const query = {};
 
     for (const key in req.query) {
@@ -55,13 +45,10 @@ const getAllTodoItems = asyncHandler(async (req, res) => {
     }
 
     // filter the data according to dynamic field given in request query
-    const data = await Todo.find(query);
+    const data = await Todo.find({$and:[query,{userId:req.user._id}]});
 
     //final response
     return commonErrorHandler(req, res, { data, quote: "OK" }, 200);
-  } catch (error) {
-    return commonErrorHandler(req, res, null, 500, error);
-  }
 });
 
 // @desc    Get Single Todo Item
@@ -69,17 +56,15 @@ const getAllTodoItems = asyncHandler(async (req, res) => {
 // @access  Private
 
 const getSingleTodoItem = asyncHandler(async (req, res) => {
-  try {
+  
     const params = req.params;
 
     // find the todo item in DB with the help of param id
-    const data = await Todo.find({ _id: params.id });
+    const data = await Todo.find({$and:[ {_id: params.id},{userId:req.user._id}],  });
 
     // final response
     return commonErrorHandler(req, res, { data, quote: "OK" }, 200);
-  } catch (error) {
-    return commonErrorHandler(req, res, null, 500, error);
-  }
+  
 });
 
 // @desc    Update a Todo Item
@@ -87,13 +72,13 @@ const getSingleTodoItem = asyncHandler(async (req, res) => {
 // @access  Private
 
 const updateTodoItem = asyncHandler(async (req, res) => {
-  try {
+
     const params = req.params;
     const body = req.body;
 
     // find and update todo item in DB
     const data = await Todo.findOneAndUpdate(
-      { _id: params.id },
+      {$and:[ {_id: params.id},{userId:req.user._id}] },
       { $set: body }
     );
 
@@ -109,9 +94,7 @@ const updateTodoItem = asyncHandler(async (req, res) => {
       { data: body, quote: "Item updated successfully" },
       200
     );
-  } catch (error) {
-    return commonErrorHandler(req, res, null, 500, error);
-  }
+
 });
 
 // @desc    Delete a Todo Item
@@ -119,11 +102,11 @@ const updateTodoItem = asyncHandler(async (req, res) => {
 // @access  Private
 
 const deleteTodoItem = asyncHandler(async (req, res) => {
-  try {
+
     const params = req.params;
 
     // find and delete todo item in DB
-    const data = await Todo.findOneAndRemove({ _id: params.id });
+    const data = await Todo.findOneAndRemove({$and:[ {_id: params.id},{userId:req.user._id}] });
     if (!data) {
       return commonErrorHandler(req, res, null, 404, "Item not found");
     }
@@ -135,9 +118,6 @@ const deleteTodoItem = asyncHandler(async (req, res) => {
       { data, quote: "Item deleted successfully" },
       200
     );
-  } catch (error) {
-    return commonErrorHandler(req, res, null, 500, error);
-  }
 });
 
 module.exports = {

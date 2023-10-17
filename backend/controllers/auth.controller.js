@@ -1,24 +1,20 @@
 const User = require("../models/user.model");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const { commonErrorHandler } = require("../helper/errorHandler.helper");
 const { asyncHandler } = require("../middlewares/asyncHandler.middleware");
+const {generateHashPassword, compareHashPassword} = require('../utils/bcryptFunctions.utils');
 
 // @desc    Signup user
 // @route   POST /api/auth/signup
 // @access  Public
 
 const userSignUp = asyncHandler(async (req, res) => {
-  try {
     const body = req.body;
-    const saltRounds = 10;
+   
 
-    // if any problem present in bcrypt module or syntax
-    const salt = bcrypt.genSaltSync(saltRounds);
-    if (!salt) throw new Error();
-    const hash = bcrypt.hashSync(body.password, salt);
-    if (!hash) throw new Error();
+    const hash = generateHashPassword(body.password);
+    
     body.password = hash;
 
     // if user already exist with similar email id
@@ -44,9 +40,6 @@ const userSignUp = asyncHandler(async (req, res) => {
         201
       );
     }
-  } catch (error) {
-    return commonErrorHandler(req, res, null, 500, error);
-  }
 });
 
 // @desc    Signin user
@@ -54,7 +47,6 @@ const userSignUp = asyncHandler(async (req, res) => {
 // @access  Public
 
 const userSignIn = asyncHandler(async (req, res) => {
-  try {
     const body = req.body;
     const userWithEmail = await User.findOne({ email: body.email });
 
@@ -70,7 +62,7 @@ const userSignIn = asyncHandler(async (req, res) => {
     }
 
     // if user password is incorrect/wrong
-    const validPassword = bcrypt.compareSync(
+    const validPassword = compareHashPassword(
       body.password,
       userWithEmail.password
     );
@@ -80,7 +72,7 @@ const userSignIn = asyncHandler(async (req, res) => {
 
     // create the token with the help of jwt
     const token = jwt.sign({ _id: userWithEmail._id }, config.JWT_SECRET);
-    if (!token) throw new Error();
+    
 
     // put above token in cookies
     res.cookie("token", token, { expire: new Date() + 9999 });
@@ -95,9 +87,6 @@ const userSignIn = asyncHandler(async (req, res) => {
       },
       200
     );
-  } catch (error) {
-    return commonErrorHandler(req, res, null, 500, error);
-  }
 });
 
 // @desc    Signout user
@@ -105,7 +94,7 @@ const userSignIn = asyncHandler(async (req, res) => {
 // @access  Private
 
 const userSignOut = asyncHandler((req, res) => {
-  try {
+  
     // remove the token from cookie
     res.clearCookie("token");
 
@@ -116,9 +105,6 @@ const userSignOut = asyncHandler((req, res) => {
       { quote: "User Signout successful" },
       202
     );
-  } catch (error) {
-    return commonErrorHandler(req, res, null, 500, error);
-  }
 });
 
 module.exports = { userSignUp, userSignIn, userSignOut };

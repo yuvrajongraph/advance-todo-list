@@ -2,9 +2,10 @@ const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const { commonErrorHandler } = require("../helper/errorHandler.helper");
+const { asyncHandler } = require("./asyncHandler.middleware");
 
-const verifyToken = async (req, res, next) => {
-  try {
+const verifyToken =asyncHandler(async (req, res, next) => {
+  
     // read authorization key from header
     const header = req.headers["authorization"];
 
@@ -22,7 +23,7 @@ const verifyToken = async (req, res, next) => {
 
     // verify the token
     let decoded_jwt = jwt.verify(token, config.JWT_SECRET);
-    if (!decoded_jwt) throw new Error();
+
 
     // find user in DB with the help of decoded token data
     const user = await User.findOne({ _id: decoded_jwt._id });
@@ -32,9 +33,6 @@ const verifyToken = async (req, res, next) => {
     req.user = user;
 
     next();
-  } catch (error) {
-    return commonErrorHandler(req, res, null, 500, error);
-  }
-};
+});
 
 module.exports = { verifyToken };
