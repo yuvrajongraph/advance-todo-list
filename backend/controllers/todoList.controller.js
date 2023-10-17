@@ -1,11 +1,12 @@
 const Todo = require("../models/todoList.model");
 const { commonErrorHandler } = require("../helper/errorHandler.helper");
+const { asyncHandler } = require("../middlewares/asyncHandler.middleware");
 
 // @desc    Add Todo Item
 // @route   POST /api/todo-list
 // @access  Private
 
-const createTodoItem = async (req, res) => {
+const createTodoItem = asyncHandler(async (req, res) => {
   try {
     const body = req.body;
 
@@ -33,7 +34,7 @@ const createTodoItem = async (req, res) => {
   } catch (error) {
     return commonErrorHandler(req, res, null, 500, error);
   }
-};
+});
 
 // @desc    Get All Todo Items
 // @route   GET  /api/todo-list
@@ -43,7 +44,7 @@ const createTodoItem = async (req, res) => {
 // @route   GET  /api/todo-list?category=?
 // @access  Private
 
-const getAllTodoItems = async (req, res) => {
+const getAllTodoItems = asyncHandler(async (req, res) => {
   try {
     const query = {};
 
@@ -61,13 +62,13 @@ const getAllTodoItems = async (req, res) => {
   } catch (error) {
     return commonErrorHandler(req, res, null, 500, error);
   }
-};
+});
 
 // @desc    Get Single Todo Item
 // @route   GET  /api/todo-list/:id
 // @access  Private
 
-const getSingleTodoItem = async (req, res) => {
+const getSingleTodoItem =asyncHandler(async (req, res) => {
   try {
     const params = req.params;
 
@@ -79,13 +80,13 @@ const getSingleTodoItem = async (req, res) => {
   } catch (error) {
     return commonErrorHandler(req, res, null, 500, error);
   }
-};
+});
 
 // @desc    Update a Todo Item
 // @route   PATCH  /api/todo-list/:id
 // @access  Private
 
-const updateTodoItem = async (req, res) => {
+const updateTodoItem =asyncHandler(async (req, res) => {
   try {
     const params = req.params;
     const body = req.body;
@@ -111,13 +112,13 @@ const updateTodoItem = async (req, res) => {
   } catch (error) {
     return commonErrorHandler(req, res, null, 500, error);
   }
-};
+});
 
 // @desc    Delete a Todo Item
 // @route   DELETE  /api/todo-list/:id
 // @access  Private
 
-const deleteTodoItem = async (req, res) => {
+const deleteTodoItem =asyncHandler(async (req, res) => {
   try {
     const params = req.params;
 
@@ -137,7 +138,7 @@ const deleteTodoItem = async (req, res) => {
   } catch (error) {
     return commonErrorHandler(req, res, null, 500, error);
   }
-};
+});
 
 module.exports = {
   createTodoItem,

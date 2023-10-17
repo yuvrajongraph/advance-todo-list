@@ -3,12 +3,13 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const { commonErrorHandler } = require("../helper/errorHandler.helper");
+const {  asyncHandler } = require("../middlewares/asyncHandler.middleware");
 
 // @desc    Signup user
 // @route   POST /api/auth/signup
 // @access  Public
 
-const userSignUp = async (req, res) => {
+const userSignUp = asyncHandler(async (req, res) => {
   try {
     const body = req.body;
     const saltRounds = 10;
@@ -46,13 +47,13 @@ const userSignUp = async (req, res) => {
   } catch (error) {
     return commonErrorHandler(req, res, null, 500, error);
   }
-};
+});
 
 // @desc    Signin user
 // @route   POST /api/auth/signin
 // @access  Public
 
-const userSignIn = async (req, res) => {
+const userSignIn = asyncHandler (async (req, res) => {
   try {
     const body = req.body;
     const userWithEmail = await User.findOne({ email: body.email });
@@ -97,13 +98,13 @@ const userSignIn = async (req, res) => {
   } catch (error) {
     return commonErrorHandler(req, res, null, 500, error);
   }
-};
+});
 
 // @desc    Signout user
 // @route   POST /api/auth/signout
 // @access  Private
 
-const userSignOut = (req, res) => {
+const userSignOut = asyncHandler((req, res) => {
   try {
     // remove the token from cookie
     res.clearCookie("token");
@@ -118,6 +119,6 @@ const userSignOut = (req, res) => {
   } catch (error) {
     return commonErrorHandler(req, res, null, 500, error);
   }
-};
+});
 
 module.exports = { userSignUp, userSignIn, userSignOut };
