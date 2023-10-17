@@ -5,32 +5,32 @@ const todoListValidator = require("../validators/todoList.validator");
 
 router.post(
   "/",
-  todoListValidator.createTodoSchema,
+  todoListValidator.createTodoItemSchema,
   todoListController.createTodoItem
 );
 
 router.get(
   "/",
-  todoListValidator.getTodoByQuerySchema,
+  todoListValidator.getTodoItemByQuerySchema,
   todoListController.getAllTodoItems
 );
 
 router.get(
   "/:id",
-  todoListValidator.TodoParamSchema,
+  todoListValidator.getTodoItemByParamsSchema,
   todoListController.getSingleTodoItem
 );
 
 router.patch(
   "/:id",
-  todoListValidator.TodoParamSchema,
-  todoListValidator.updateTodoSchema,
+  todoListValidator.getTodoItemByParamsSchema,
+  todoListValidator.updateTodoItemSchema,
   todoListController.updateTodoItem
 );
 
 router.delete(
   "/:id",
-  todoListValidator.TodoParamSchema,
+  todoListValidator.getTodoItemByParamsSchema,
   todoListController.deleteTodoItem
 );
 

@@ -4,17 +4,23 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const { commonErrorHandler } = require("../helper/errorHandler.helper");
 
-const signUp = async (req, res) => {
+// @desc    Signup user
+// @route   POST /api/auth/signup
+// @access  Public
+
+const userSignUp = async (req, res) => {
   try {
     const body = req.body;
     const saltRounds = 10;
+
+    // if any problem present in bcrypt module or syntax
     const salt = bcrypt.genSaltSync(saltRounds);
     if (!salt) throw new Error();
-
     const hash = bcrypt.hashSync(body.password, salt);
     if (!hash) throw new Error();
     body.password = hash;
 
+    // if user already exist with similar email id
     const existingUser = await User.findOne({ email: body.email });
     if (existingUser) {
       return commonErrorHandler(
@@ -25,8 +31,11 @@ const signUp = async (req, res) => {
         "User already exists with this email id"
       );
     } else {
+      // create user schema and save in database
       const user = new User(body);
       const data = await user.save();
+
+      // final response
       return commonErrorHandler(
         req,
         res,
@@ -39,10 +48,16 @@ const signUp = async (req, res) => {
   }
 };
 
-const signIn = async (req, res) => {
+// @desc    Signin user
+// @route   POST /api/auth/signin
+// @access  Public
+
+const userSignIn = async (req, res) => {
   try {
     const body = req.body;
     const userWithEmail = await User.findOne({ email: body.email });
+
+    // if user email id is incorrect
     if (!userWithEmail) {
       return commonErrorHandler(
         req,
@@ -52,6 +67,8 @@ const signIn = async (req, res) => {
         "User does not exist, please sign up"
       );
     }
+
+    // if user password is incorrect/wrong
     const validPassword = bcrypt.compareSync(
       body.password,
       userWithEmail.password
@@ -59,10 +76,15 @@ const signIn = async (req, res) => {
     if (!validPassword) {
       return commonErrorHandler(req, res, null, 400, "Password is incorrect");
     }
+
+    // create the token with the help of jwt
     const token = jwt.sign({ _id: userWithEmail._id }, config.JWT_SECRET);
     if (!token) throw new Error();
 
+    // put above token in cookies
     res.cookie("token", token, { expire: new Date() + 9999 });
+
+    // final response
     return commonErrorHandler(
       req,
       res,
@@ -77,13 +99,20 @@ const signIn = async (req, res) => {
   }
 };
 
-const signOut = (req, res) => {
+// @desc    Signout user
+// @route   POST /api/auth/signout
+// @access  Private
+
+const userSignOut = (req, res) => {
   try {
+    // remove the token from cookie
     res.clearCookie("token");
+
+    // final response
     return commonErrorHandler(
       req,
       res,
-      { quote: "User signout successful" },
+      { quote: "User Signout successful" },
       202
     );
   } catch (error) {
@@ -91,4 +120,4 @@ const signOut = (req, res) => {
   }
 };
 
-module.exports = { signUp, signIn, signOut };
+module.exports = { userSignUp, userSignIn, userSignOut };

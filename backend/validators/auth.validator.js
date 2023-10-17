@@ -7,7 +7,8 @@ const complexityOptions = {
   max: 16,
 };
 
-const signUpSchema = async (req, res, next) => {
+// schema of user signup api in request body for validation using joi
+const userSignUpSchema = async (req, res, next) => {
   const schema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().lowercase().required(),
@@ -16,7 +17,8 @@ const signUpSchema = async (req, res, next) => {
   validateRequest(req, res, next, schema, "body");
 };
 
-const signInSchema = async (req, res, next) => {
+// schema of user signin api in request body for validation using joi
+const userSignInSchema = async (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().email().lowercase().required(),
     password: passwordComplexity(complexityOptions).required(),
@@ -24,4 +26,4 @@ const signInSchema = async (req, res, next) => {
   validateRequest(req, res, next, schema, "body");
 };
 
-module.exports = { signInSchema, signUpSchema };
+module.exports = { userSignInSchema, userSignUpSchema };

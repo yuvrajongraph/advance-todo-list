@@ -5,14 +5,14 @@ const isAuthenticate = require("../middlewares/auth.middleware");
 const authValidator = require("../validators/auth.validator");
 const { commonErrorHandler } = require("../helper/errorHandler.helper");
 
-router.post("/signup", authValidator.signUpSchema, authController.signUp);
+router.post("/signup", authValidator.userSignUpSchema, authController.userSignUp);
 
-router.post("/signin", authValidator.signInSchema, authController.signIn);
+router.post("/signin", authValidator.userSignInSchema, authController.userSignIn);
 
 router.get("/test", isAuthenticate.verifyToken, (req, res) => {
   return commonErrorHandler(req, res, { quote: "Passed" }, 202);
 });
 
-router.get("/signout", isAuthenticate.verifyToken, authController.signOut);
+router.post("/signout", isAuthenticate.verifyToken, authController.userSignOut);
 
 module.exports = router;

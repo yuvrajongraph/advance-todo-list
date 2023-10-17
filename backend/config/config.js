@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
 
+// Configure the env file according to node environment
 if (process.env.NODE_ENV.trim() === "development".trim()) {
   dotenv.config({ path: __dirname + "/../.env.development" });
 } else if (process.env.NODE_ENV.trim() === "test") {

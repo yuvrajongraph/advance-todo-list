@@ -7,6 +7,7 @@ const commonErrorHandler = async (
   statusCode = 500,
   error = null
 ) => {
+  // all errors handle in the code by this
   let errorMessage = "Something went wrong. Please try again";
   if (message) {
     errorMessage = message;
@@ -17,6 +18,7 @@ const commonErrorHandler = async (
   }
   req.error = error;
 
+  // send response for every api
   const response = {
     statusCode,
     data: errorMessage.data ? errorMessage.data : {},

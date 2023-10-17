@@ -1,7 +1,8 @@
 const Joi = require("joi");
 const { validateRequest } = require("../helper/commonFunctions.helper");
 
-const createTodoSchema = async (req, res, next) => {
+// schema of create todo item in request body for validation using joi
+const createTodoItemSchema = async (req, res, next) => {
   const schema = Joi.object({
     title: Joi.string().required(),
     status: Joi.string().valid("open", "close").default("open"),
@@ -11,7 +12,8 @@ const createTodoSchema = async (req, res, next) => {
   validateRequest(req, res, next, schema, "body");
 };
 
-const updateTodoSchema = async (req, res, next) => {
+// schema of update todo item in request body for validation using joi
+const updateTodoItemSchema = async (req, res, next) => {
   const schema = Joi.object({
     title: Joi.string(),
     status: Joi.string().valid("open", "close"),
@@ -21,14 +23,16 @@ const updateTodoSchema = async (req, res, next) => {
   validateRequest(req, res, next, schema, "body");
 };
 
-const TodoParamSchema = async (req, res, next) => {
+// schema of get todo item id in request parameter for validation using joi
+const getTodoItemByParamsSchema = async (req, res, next) => {
   const schema = Joi.object({
     id: Joi.string().alphanum().length(24).required(),
   });
   validateRequest(req, res, next, schema, "params");
 };
 
-const getTodoByQuerySchema = async (req, res, next) => {
+// schema of get todo item any field in request query for validation using joi
+const getTodoItemByQuerySchema = async (req, res, next) => {
   const schema = Joi.object({
     title: Joi.string(),
     status: Joi.string().valid("open", "close"),
@@ -39,8 +43,8 @@ const getTodoByQuerySchema = async (req, res, next) => {
 };
 
 module.exports = {
-  createTodoSchema,
-  updateTodoSchema,
-  TodoParamSchema,
-  getTodoByQuerySchema,
+  createTodoItemSchema,
+  updateTodoItemSchema,
+  getTodoItemByParamsSchema,
+  getTodoItemByQuerySchema,
 };
