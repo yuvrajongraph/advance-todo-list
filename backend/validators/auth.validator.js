@@ -24,4 +24,4 @@ const signInSchema = async (req, res, next) => {
   validateRequest(req, res, next, schema, "body");
 };
 
-module.exports = {signInSchema, signUpSchema}
+module.exports = { signInSchema, signUpSchema };
