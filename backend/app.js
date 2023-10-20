@@ -15,7 +15,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Enable cors support to accept cross origin requests
-app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
+app.use(
+  cors({
+    origin: config.FRONTEND_URL,
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 
 // Enable helmet js middlewares to configure secure headers
 app.use(helmet());

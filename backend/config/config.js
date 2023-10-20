@@ -16,6 +16,7 @@ const config = {
   SERVER_PORT: process.env.SERVER_PORT,
   JWT_SECRET: process.env.JWT_SECRET,
   DB_URL: process.env.DB_URL,
+  FRONTEND_URL: process.env.FRONTEND_URL,
 };
 
 module.exports = config;
