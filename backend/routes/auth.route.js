@@ -9,7 +9,10 @@ router.post("/signup", authValidator.userSignUpSchema, authController.userSignUp
 
 router.post("/signin", authValidator.userSignInSchema, authController.userSignIn);
 
+router.get("/signup", authController.userSignUpVerification);
 
 router.post("/signout", isAuthenticate.verifyToken, authController.userSignOut);
+
+
 
 module.exports = router;

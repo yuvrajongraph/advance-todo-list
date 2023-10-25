@@ -41,14 +41,9 @@ const Login = () => {
         path: "/",
         maxAge: 3600,
       });
-      toast.success("User signin successfully", {
-        position: "top-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+
+  
+      toast.success(response?.data?.message);
 
       setInput({
         email: "",
@@ -60,6 +55,7 @@ const Login = () => {
       }, 2000);
     } else {
       dispatch(loginFailure(response?.error?.data));
+      toast.error(response?.error?.data?.error)
     }
   };
 

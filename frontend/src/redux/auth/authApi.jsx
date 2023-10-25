@@ -6,7 +6,9 @@ const baseQuery = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     const token = getState().users?.user?.token;
     if (!token) return headers;
+   
     headers.set("Authorization", `Bearer ${token}`);
+  
   },
 });
 
@@ -33,7 +35,16 @@ export const authApi = createApi({
         body: { name, email, password },
       }),
     }),
+    registerUserVerification: builder.mutation({
+      query: (token) => ({
+        url: "/auth/signup",
+        method: "GET",
+        params: {
+          token: token,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useLoginUserMutation, useRegisterUserMutation } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useRegisterUserVerificationMutation } = authApi;

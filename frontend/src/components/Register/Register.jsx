@@ -9,8 +9,7 @@ import { toast } from "react-toastify";
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [registerData, { data, isError, isSuccess }] =
-    useRegisterUserMutation();
+  const [registerData, { data, isError, isSuccess }] = useRegisterUserMutation();
   const [input, setInput] = useState({
     name: "",
     email: "",
@@ -39,7 +38,7 @@ const Register = () => {
     if (response?.data) {
       dispatch(registerSuccess(response?.data?.data));
 
-      toast.success("User regitration successful", {
+      toast.success(response?.data?.message, {
         position: "top-right",
         autoClose: 1000,
         hideProgressBar: false,
@@ -59,6 +58,7 @@ const Register = () => {
       }, 2000);
     } else {
       dispatch(registerFailure(response?.error?.data));
+      toast.error(response?.error?.data?.error);
     }
   };
   return (

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const [authenticated, cookie] = useAuth();
-  const userName = cookie?.userData?.details?.name;
+  const userName = cookie?.userData?.details?.name.trim()?.replace(/ +/g, ' ');
   const userArray = userName?.split(" ");
   const firstCharacters = userArray?.map((str, index) => {
     if (index < 2) {

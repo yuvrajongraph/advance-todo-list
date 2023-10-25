@@ -4,7 +4,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
     required: true,
-    unique: true,
   },
   email: {
     type: String,
@@ -16,6 +15,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
     required: true,
+  },
+  isRegister: {
+    type: Boolean,
+    default:false
   },
 });
 
