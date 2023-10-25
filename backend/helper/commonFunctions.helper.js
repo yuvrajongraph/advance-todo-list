@@ -1,6 +1,7 @@
 const { commonErrorHandler } = require("./errorHandler.helper");
 
 const validateRequest = (req, res, next, schema, requestParamterType) => {
+  // error handling for validators
   let requestData = {};
   if (requestParamterType === "body") {
     requestData = req.body;
@@ -10,6 +11,7 @@ const validateRequest = (req, res, next, schema, requestParamterType) => {
     requestData = req.params;
   }
 
+  // validate the schema of request body
   const { error, value } = schema.validate(requestData);
 
   if (!error) {
@@ -24,8 +26,9 @@ const validateRequest = (req, res, next, schema, requestParamterType) => {
   }
 
   const { details } = error;
+  // iterate in details array of present error
   const message = details.map((i) => i.message).join(",");
-  return commonErrorHandler(req, res, message, 422);
+  return commonErrorHandler(req, res, null, 422, message);
 };
 
 module.exports = {
