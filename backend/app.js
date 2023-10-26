@@ -7,6 +7,9 @@ const mongoose = require("mongoose");
 const config = require("./config/config");
 const { commonErrorHandler } = require("./helper/errorHandler.helper");
 const cookieParser = require("cookie-parser");
+const passport = require('passport');
+const session = require('express-session')
+const isAuthenticate = require('./middlewares/auth.middleware')
 // const authController = require('./controllers/auth.controller')
 
 
@@ -17,6 +20,16 @@ app.use(express.json());
 app.set('view engine','ejs');
 
 // app.use(authController.middleWare);
+
+app.use(session({
+  secret:'mysecret',
+  resave:false,
+  cookie:{secure:false}
+}))
+
+app.use(passport.initialize());
+
+app.use(passport.session());
 
 // Enable to access cookie using the request parameter
 app.use(cookieParser());
@@ -50,6 +63,9 @@ app.use("/health", async (req, res) => {
   return res.send({ message: "Application runing successfully!" });
 });
 
+app.get('/',(req,res)=>{
+  return res.render("googleAuth");
+})
 
 // app.get(`/verify-signup/${authController.randomToken}`,(req,res)=>{
 //   const verifySignupURL = `http://localhost:1010/auth/signup/token=${req.locals.Token}`;
@@ -63,6 +79,7 @@ app.use("/health", async (req, res) => {
 // REST API entry point
 
 routes.registerRoutes(app);
+
 
 // 404 Error Handling
 app.use((req, res) => {

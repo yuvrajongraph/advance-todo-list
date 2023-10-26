@@ -203,9 +203,132 @@ const userSignOut = asyncHandler((req, res) => {
 //   req.locals = { Token };
 //   next();
 // }
+
+const userResetPasswordMail = asyncHandler(async (req, res) => {
+  // create the token for sign up verification
+
+  const token = jwt.sign(
+    { _id: req.user._id, email: req.user.email, password: req.user.password },
+    config.JWT_SECRET
+  );
+
+  // read the content of html from ejs file
+  const templatePath = path.join(
+    __dirname + "/../",
+    "views",
+    "resetPasswordEmail.ejs"
+  );
+  const templateContent = fs.readFileSync(templatePath, "utf8");
+  const EmailURL = `${config.FRONTEND_URL}/auth/reset-password?token=${token}`;
+
+  // send an object of data to mail
+  const ejsData = {
+    title: "Email for Reset Password",
+    link: EmailURL,
+  };
+
+  const renderedTemplate = ejs.render(templateContent, ejsData);
+  sendMail(renderedTemplate, "Reset Password", req.user.email);
+
+  // final response
+  return commonErrorHandler(
+    req,
+    res,
+    { quote: "Link sent to email for reset password" },
+    200
+  );
+});
+
+const userResetPassword = asyncHandler(async (req, res) => {
+  const body = req.body;
+
+  // verify the token is correct or not for registration
+  const tokenDecoded = jwt.verify(req.query.token, config.JWT_SECRET);
+
+  if (!tokenDecoded) {
+    return commonErrorHandler(req, res, null, 404, "Token is incorrect");
+  }
+
+  // check the old password enter by user is correct or not
+  const validPassword = compareHashPassword(
+    body.oldPassword,
+    tokenDecoded.password
+  );
+  if (!validPassword) {
+    return commonErrorHandler(
+      req,
+      res,
+      null,
+      400,
+      "Password is not matched with older one"
+    );
+  }
+
+  // if old and new password are same
+  if (body.oldPassword === body.newPassword) {
+    return commonErrorHandler(
+      req,
+      res,
+      null,
+      400,
+      "You cannot set this password. This password is already been used"
+    );
+  }
+
+  // make a dummy object equal to decoded token
+  const objToCheck = tokenDecoded;
+
+  // compare the dummy object with decoded token
+  const hasObject = [...tokenSet].some((setObj) =>
+    Object.keys(setObj).every((key) => setObj[key] === objToCheck[key])
+  );
+
+  // only one time user can verify the token from frontend
+  if (hasObject) {
+    return commonErrorHandler(
+      req,
+      res,
+      null,
+      403,
+      "Access denied. Token has already been used."
+    );
+  }
+
+  // add the decoded token in the set
+  tokenSet.add(tokenDecoded);
+  const hashPassword = generateHashPassword(body.newPassword);
+  
+  // update the field password in user DB with new password
+  await User.findOneAndUpdate(
+    { _id: tokenDecoded._id },
+    { $set: { password: hashPassword } }
+  );
+
+  // final response
+  return commonErrorHandler(
+    req,
+    res,
+    { quote: "User password change successfully" },
+    202
+  );
+});
+
+const googleAuthSuccess = asyncHandler(async(req,res)=>{
+  const name = req.user.displayName;
+  return res.send(`Hello there ${name}`)
+})
+
+const googleAuthFailure = asyncHandler(async(req,res)=>{
+  return res.send("Fail authentication!!")
+})
+
 module.exports = {
   userSignUp,
   userSignIn,
   userSignOut,
   userSignUpVerification,
+  userResetPassword,
+  userResetPasswordMail,
+  googleAuthSuccess,
+  googleAuthFailure
 };
