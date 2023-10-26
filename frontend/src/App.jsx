@@ -14,6 +14,8 @@ import { withCookies } from "react-cookie";
 import useAuth from "./hooks/useAuth";
 import Navbar from "./components/Navbar/Navbar";
 import RegisterVerification from "./components/RegisterVerification/RegisterVerification";
+import ResetPassword from "./components/ResetPassword/ResetPassword";
+
 
 function App() {
   const [authenticated, cookie] = useAuth();
@@ -45,6 +47,7 @@ function App() {
           )}
         </Route>
         <Route path="/auth/signup" element={<RegisterVerification />} />
+        <Route path="/auth/reset-password" element={<ResetPassword />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>

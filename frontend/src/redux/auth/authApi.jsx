@@ -3,14 +3,13 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BACKEND_URL,
   credentials: "include",
-  prepareHeaders: (headers, { getState }) => {
+  prepareHeaders: (headers,{getState}) => {
     const token = getState().users?.user?.token;
-    if (!token) return headers;
-   
+    if(!token) return headers;
     headers.set("Authorization", `Bearer ${token}`);
-  
+    return headers;
   },
-});
+}); 
 
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
@@ -44,7 +43,23 @@ export const authApi = createApi({
         },
       }),
     }),
+    resetPassword: builder.mutation({
+      query: ({token,oldPassword,newPassword}) => ({
+        url: "/auth/reset-password",
+        method: "POST",
+        params: {
+          token: token,
+        },
+        body:{oldPassword, newPassword}
+      }),
+    }),
+    resetPasswordMail: builder.mutation({
+      query: () => ({
+        url: "/auth/reset-password",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useLoginUserMutation, useRegisterUserMutation, useRegisterUserVerificationMutation } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useRegisterUserVerificationMutation, useResetPasswordMutation, useResetPasswordMailMutation } = authApi;

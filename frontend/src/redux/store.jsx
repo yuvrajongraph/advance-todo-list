@@ -3,17 +3,41 @@ import authSlice from "./auth/authSlice";
 import todoSlice from "./todo/todoSlice";
 import { authApi } from "./auth/authApi";
 import { todoApi } from "./todo/todoApi";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist'
+import storage from "redux-persist/lib/storage";
+import { combineReducers } from "@reduxjs/toolkit";
+
+const persistConfig = {
+  key: "root",
+  storage,
+};
 
 const store = configureStore({
-  reducer: {
+  reducer: persistReducer(persistConfig, combineReducers({
     users: authSlice,
     [authApi.reducerPath]: authApi.reducer,
-    todos:todoSlice,
+    todos: todoSlice,
     [todoApi.reducerPath]: todoApi.reducer,
-  },
+  })),
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, todoApi.middleware),
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+      thunk: true,
+    }).concat(authApi.middleware, todoApi.middleware),
   devTools: true,
 });
 
+const persistor = persistStore(store);
 export default store;
+export { persistor };
