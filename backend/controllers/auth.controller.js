@@ -313,10 +313,16 @@ const userResetPassword = asyncHandler(async (req, res) => {
   );
 });
 
-const googleAuthSuccess = asyncHandler(async(req,res)=>{
-  const name = req.user.displayName;
-  return res.send(`Hello there ${name}`)
-})
+const googleAuthSuccess = (req,res)=>{
+  console.log(req.user)
+   return commonErrorHandler(
+    req,
+    res,
+    { data: req.user.displayName, quote: "User login success by google" },
+    202
+  );
+ 
+}
 
 const googleAuthFailure = asyncHandler(async(req,res)=>{
   return res.send("Fail authentication!!")

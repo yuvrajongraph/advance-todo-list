@@ -2,7 +2,6 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BACKEND_URL,
-  credentials: "include",
   prepareHeaders: (headers,{getState}) => {
     const token = getState().users?.user?.token;
     if(!token) return headers;
@@ -59,7 +58,19 @@ export const authApi = createApi({
         method: "GET",
       }),
     }),
+    logoutUser: builder.mutation({
+      query: () => ({
+        url: "/auth/signout",
+        method: "POST",
+      }),
+    }),
+    googleAuth: builder.mutation({
+      query: () => ({
+        url: "/auth/google/callback",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useLoginUserMutation, useRegisterUserMutation, useRegisterUserVerificationMutation, useResetPasswordMutation, useResetPasswordMailMutation } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useRegisterUserVerificationMutation, useResetPasswordMutation, useResetPasswordMailMutation, useGoogleAuthMutation, useLogoutUserMutation } = authApi;

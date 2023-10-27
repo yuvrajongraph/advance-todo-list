@@ -2,10 +2,17 @@ import React, { useState } from "react";
 import { useResetPasswordMutation } from "../../redux/auth/authApi";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Cookies } from "react-cookie";
+import { logoutSuccess } from "../../redux/auth/authSlice";
 
 const ResetPassword = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const cookies = new Cookies();
   const [resetPassword, { data, isError, isSuccess }] =
     useResetPasswordMutation();
   const handleResetPassword = async (e) => {
@@ -20,6 +27,12 @@ const ResetPassword = () => {
     const response = await resetPassword(body);
     if (response?.data) {
       toast.success(response?.data?.message);
+      setTimeout(() =>{
+       window.location.href='/';
+       dispatch(logoutSuccess());
+       cookies.remove('userData');
+      },1000)
+      
     } else {
       toast.error(response?.error?.data?.error);
     }

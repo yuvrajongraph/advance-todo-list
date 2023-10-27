@@ -12,11 +12,16 @@ const Login = () => {
   const navigate = useNavigate();
   const [loginUser] = useLoginUserMutation();
   const [cookies, setCookie] = useCookies(["userData"]);
-
   const [input, setInput] = useState({
     email: "",
     password: "",
   });
+
+  const handleGoogleLogin = async (e) => {
+    e.preventDefault();
+    window.open(`${import.meta.env.VITE_BACKEND_URL}/auth/google`, "_self");
+   };
+
   const handleEvent = (e) => {
     e.preventDefault();
 
@@ -37,12 +42,8 @@ const Login = () => {
     const response = await loginUser(body);
     if (response?.data) {
       dispatch(loginSuccess(response?.data?.data));
-      setCookie("userData", JSON.stringify(response?.data?.data), {
-        path: "/",
-        maxAge: 3600,
-      });
+      setCookie("userData", JSON.stringify(response?.data?.data));
 
-  
       toast.success(response?.data?.message);
 
       setInput({
@@ -52,10 +53,10 @@ const Login = () => {
       setTimeout(() => {
         navigate("/");
         window.location.reload();
-      }, 2000);
+      }, 1000);
     } else {
       dispatch(loginFailure(response?.error?.data));
-      toast.error(response?.error?.data?.error)
+      toast.error(response?.error?.data?.error);
     }
   };
 
@@ -101,13 +102,24 @@ const Login = () => {
                 </label>
               </div>
             </div>
-            <button
-              className="w-full mb-4 text-[18px] mt-6 rounded-full bg-white text-emerald-800 hover:bg-emerald-600 hover:text-white py-2 transition-colors duration-300 "
-              type="submit"
-              onClick={handleLogin}
-            >
-              Login
-            </button>
+            <div className="mb-2">
+              <button
+                className="w-full mb-4 text-[18px] mt-6 rounded-full bg-white text-emerald-800 hover:bg-emerald-600 hover:text-white py-2 transition-colors duration-300 "
+                type="submit"
+                onClick={handleLogin}
+              >
+                Login
+              </button>
+            </div>
+            <div className="mb-2 text-center text-gray-600">OR</div>
+            <div className="mb-2">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none w-full"
+                onClick={handleGoogleLogin}
+              >
+                Sign in with Google
+              </button>
+            </div>
             <div>
               <span className="mt-4 text-white">
                 New Here?{" "}

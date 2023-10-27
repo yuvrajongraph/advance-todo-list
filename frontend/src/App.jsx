@@ -17,9 +17,10 @@ import RegisterVerification from "./components/RegisterVerification/RegisterVeri
 import ResetPassword from "./components/ResetPassword/ResetPassword";
 
 
+
 function App() {
   const [authenticated, cookie] = useAuth();
-
+  
   useEffect(() => {
     window.process = {
       ...window.process,
@@ -29,7 +30,7 @@ function App() {
     <>
       <ToastContainer />
       <Routes>
-        {authenticated === true ? (
+        {authenticated ? (
           <Route path="/" element={<Navbar />} />
         ) : (
           <Route path="/" element={<Navigate to={"/auth/login"} />} />
