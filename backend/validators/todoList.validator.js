@@ -4,7 +4,7 @@ const { validateRequest } = require("../helper/commonFunctions.helper");
 
 const status =  Joi.string().valid("open", "close").default("open");
 const category =  Joi.string().valid("normal", "food", "other");
-const dateTime =  Joi.date().iso();
+const dateTime =  Joi.string().isoDate();
 const title = Joi.string();
 
 // schema of create todo item in request body for validation using joi

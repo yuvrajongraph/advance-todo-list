@@ -12,9 +12,9 @@ import PageNotFound from "./components/PageNotFound/PageNotFound";
 import AuthBackground from "./components/AuthBackground/AuthBackground";
 import { withCookies } from "react-cookie";
 import useAuth from "./hooks/useAuth";
-import Navbar from "./components/Navbar/Navbar";
 import RegisterVerification from "./components/RegisterVerification/RegisterVerification";
 import ResetPassword from "./components/ResetPassword/ResetPassword";
+import AppLayout from "./components/Applayout/Applayout";
 
 
 
@@ -31,7 +31,7 @@ function App() {
       <ToastContainer />
       <Routes>
         {authenticated ? (
-          <Route path="/" element={<Navbar />} />
+          <Route path="/" element={<AppLayout />} />
         ) : (
           <Route path="/" element={<Navigate to={"/auth/login"} />} />
         )}
