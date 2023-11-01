@@ -7,4 +7,14 @@ export default defineConfig({
   server: {
     open: '/auth/register', 
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-query': ['react-query'],
+          'mui': ['@mui/material', '@mui/icons-material'],
+        },
+      },
+    },
+  },
 });
