@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
 import Navbar from '../Navbar/Navbar'
-
-import BigCalendar from '../BigCalendar/BigCalendar'
+import { Outlet } from 'react-router-dom'
 
 const AppLayout = () => {
    
   return (
     <>
     <Navbar />
-    <BigCalendar  />
+    <Outlet />
     </>
   )
 }

@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import Modal from "react-modal";
 import { useCreateTodoItemMutation } from "../../redux/todo/todoApi";
 import { toast } from "react-toastify";
 import ModalNavbar from "./ModalNavbar";
 
-// Modal.setAppElement("#root");
+import dayjs from "dayjs";
+import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { formatDateToYYYYMMDDTHHMM } from "../../utils/isoDateConversion";
 
 const CustomModal = ({
   showTodo,
@@ -38,6 +42,13 @@ const CustomModal = ({
       return { ...input, [name]: value };
     });
   };
+
+  const handleDateTime = (e) => {
+    setInput(()=>{
+        return {...input,dateTime:e.$d}
+    })
+  };
+
   const saveTodo = async (e) => {
     e.preventDefault();
     const response = await createTodoItem({
@@ -130,20 +141,17 @@ const CustomModal = ({
                 ) : (
                   <>
                     <div className="mb-4 ">
-                      <label
-                        className="block text-gray-600 text-sm font-semibold mb-2"
-                        htmlFor="DateTime"
-                      >
-                        DateTime
-                      </label>
-                      <input
-                        className="w-full border p-2 rounded"
-                        type="text"
-                        id="dateTime"
-                        name="dateTime"
-                        value={dateTime}
-                        onChange={handleInputEvent}
-                      />
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={["DateTimePicker"]}>
+                          <DateTimePicker
+                            label="Date Time"
+                            value={dayjs(dateTime)}
+                            onChange={handleDateTime}
+                            format="YYYY-MM-DDThh:mm"
+                            slotProps={{ textField: { size: "small" } }}
+                          />
+                        </DemoContainer>
+                      </LocalizationProvider>
                     </div>
                     <div className="mb-4 ">
                       <label
@@ -152,19 +160,19 @@ const CustomModal = ({
                       >
                         Description
                       </label>
-                        <input
-                          className="w-full border p-2 rounded"
-                          type="text"
-                          id="description"
-                          name="description"
-                          placeholder="Add description"
-                          value={description}
-                          onChange={handleInputEvent}
-                          style={{
-                            padding: "20px"
-                          }}
-                        />
-                      </div>
+                      <input
+                        className="w-full border p-2 rounded"
+                        type="text"
+                        id="description"
+                        name="description"
+                        placeholder="Add description"
+                        value={description}
+                        onChange={handleInputEvent}
+                        style={{
+                          padding: "20px",
+                        }}
+                      />
+                    </div>
                   </>
                 )}
                 <div className="mb-4">

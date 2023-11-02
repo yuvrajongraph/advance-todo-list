@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
     required: true,
-    unique: true,
   },
   password: {
     type: String,
@@ -18,7 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   isRegister: {
     type: Boolean,
-    default:false
+    default: false,
   },
 });
 

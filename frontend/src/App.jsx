@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
@@ -15,6 +15,9 @@ import useAuth from "./hooks/useAuth";
 import RegisterVerification from "./components/RegisterVerification/RegisterVerification";
 import ResetPassword from "./components/ResetPassword/ResetPassword";
 import AppLayout from "./components/Applayout/Applayout";
+import BigCalendar from "./components/BigCalendar/BigCalendar";
+import UpdateEventScreen from "./components/EventCard/UpdateEventScreen";
+
 
 
 
@@ -31,7 +34,10 @@ function App() {
       <ToastContainer />
       <Routes>
         {authenticated ? (
-          <Route path="/" element={<AppLayout />} />
+          <Route path="/" element={<AppLayout />} >
+            <Route path="/" element={<BigCalendar />} />
+            <Route path="/update" element={<UpdateEventScreen />} />
+          </Route>
         ) : (
           <Route path="/" element={<Navigate to={"/auth/login"} />} />
         )}

@@ -41,10 +41,10 @@ const userSignUp = asyncHandler(async (req, res) => {
     );
   } else {
     // create user schema and save in database
-
+   
     const user = new User(body);
     const data = await user.save();
-
+    console.log(data)
     // create the token for sign up verification
     const token = jwt.sign(
       { email: data.email, id: data._id },

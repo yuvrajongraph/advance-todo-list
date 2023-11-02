@@ -1,32 +1,120 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SquareIcon from "@mui/icons-material/Square";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import CloseIcon from "@mui/icons-material/Close";
+import DeletePopUpScreen from "./DeletePopUpScreen";
+import { useNavigate } from "react-router-dom";
+import { compareIst } from "../../utils/compareIst";
 
 const EventCard = ({
   selectedEvent,
-  setSelectedItem,
+  setSelectedEvent,
   popupPosition,
   isEventOpen,
+  setIsEventOpen,
 }) => {
+  const navigate = useNavigate();
+  const [deletePopUp, setDeletePopUp] = useState(false);
+  const [cutThrough, setCutThrough] = useState(false);
+  const closePopUp = () => {
+    setIsEventOpen(false);
+  };
+
+  const deleteEvent = (e) => {
+    e.preventDefault();
+    setIsEventOpen(false);
+    setDeletePopUp(true);
+  };
+
+  const updateEvent = (e) => {
+    e.preventDefault();
+    setIsEventOpen(false);
+    navigate("/update");
+  };
+
+  useEffect(() => {
+    const { date1IST, date2IST } = compareIst(
+      new Date(selectedEvent.start),
+      new Date()
+    );
+
+    if (date1IST < date2IST) {
+      setCutThrough(true);
+    } else {
+      setCutThrough(false);
+    }
+  }, [selectedEvent]);
   return (
     <>
       {isEventOpen && (
         <>
           <div
-            className="transform -translate-x-1/2 -translate-y-1/2 z-50 w-1/5 mt-3"
+            className="transform -translate-x-1/2 -translate-y-1/2 z-50 w-1/5 mt-3 "
             style={{
               position: "fixed",
               top: popupPosition.top,
               left: popupPosition.left,
             }}
           >
-            <div className="bg-[#E6E6E6] p-4 rounded shadow ">
-              <h1>{selectedEvent.title}</h1>
-              <Button>
-                Secondary
-              </Button>
+            <div
+              className="bg-[#E6E6E6] p-4 rounded shadow flex flex-col whitespace-nowrap"
+              style={{ resize: "horizontal", overflow: "auto" }}
+            >
+              <div className="flex flex-wrap justify-end">
+                <button onClick={deleteEvent}>
+                  <DeleteIcon
+                    fontSize="small"
+                    style={{ margin: "0px 10px" }}
+                    className="hover:text-red-500"
+                  />
+                </button>
+                <button onClick={updateEvent}>
+                  <ModeEditIcon
+                    fontSize="small"
+                    style={{ margin: "0px 10px" }}
+                    className="hover:text-red-500"
+                  />
+                </button>
+                <MoreHorizIcon
+                  fontSize="small"
+                  style={{ margin: "0px 10px" }}
+                  className="hover:text-red-500"
+                />
+                <button onClick={closePopUp}>
+                  <CloseIcon fontSize="small" className="hover:text-red-500" />
+                </button>
+              </div>
+              <div className="p-3 flex">
+                <SquareIcon
+                  fontSize="large"
+                  color="primary"
+                  className="hover:text-green-500"
+                />
+
+                <h1
+                  className="text-black text-small pl-1"
+                  style={{
+                    resize: "none",
+                    textDecoration: cutThrough ? "line-through" : "none",
+                  }}
+                >
+                  {selectedEvent.title}
+                </h1>
+              </div>
             </div>
           </div>
         </>
+      )}
+      {deletePopUp && (
+        <DeletePopUpScreen
+          deletePopUp={deletePopUp}
+          setDeletePopUp={setDeletePopUp}
+          popupPosition={popupPosition}
+          selectedEvent={selectedEvent}
+          setSelectedEvent={setSelectedEvent}
+        />
       )}
     </>
   );
