@@ -19,11 +19,11 @@ export const formatDateToYYYYMMDDTHHMM = (date) => {
   const amOrPm = hours >= 12 ? "PM" : "AM";
   const formattedHours = hours % 12 || 12;
 
-  const formattedDate = `${year}-${month}-${day}T${ formattedHours}:${minutes}`;
+  const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
   return formattedDate;
 };
 
-export const formatToIndianStandardTime = (date) => {
+export const formatYYYYMMDDTHHMMToIndianStandardTime = (date) => {
   const inputDate = new Date(date);
   const options = {
     weekday: "short",
@@ -40,3 +40,10 @@ export const formatToIndianStandardTime = (date) => {
 
   return formattedDate;
 };
+
+
+export const formatIsoToIst = (date)=>{
+  const utcTime = new Date(date);
+  const istTime = new Date(utcTime.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+  return istTime;
+}

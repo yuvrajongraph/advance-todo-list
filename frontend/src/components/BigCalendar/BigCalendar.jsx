@@ -5,12 +5,12 @@ import { useGetAllTodoItemsMutation } from "../../redux/todo/todoApi";
 import {
   formatDateToYYYYMMDD,
   formatDateToYYYYMMDDTHHMM,
-} from "../../utils/isoDateConversion";
+} from "../../utils/dateConversion";
 import CustomModal from "../CustomModal/CustomModal";
 import EventCard from "../EventCard/EventCard";
 import EventContext from "../../Context/Event/EventContext";
 import { compareIst } from "../../utils/compareIst";
-
+ 
 const localizer = momentLocalizer(moment);
 
 const BigCalendar = () => {
@@ -21,7 +21,6 @@ const BigCalendar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEventOpen, setIsEventOpen] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-  //  const [selectedEvent, setSelectedEvent] = useState(null);
   const [getAllTodoItems] = useGetAllTodoItemsMutation();
 
   const todoSchema = {
@@ -46,24 +45,21 @@ const BigCalendar = () => {
     if (clientY >= 259 && clientX >= 1023) {
       setPopupPosition({ top: clientY - 200, left: clientX - 200 });
     } else if (clientX <= 341 && clientY >= 420) {
-      setPopupPosition({ top: clientY-200 , left: clientX + 200 });
-    } else if (clientY >= 420 ) {
-      setPopupPosition({ top: clientY - 200, left: clientX  });
-    }else if (clientX >= 1023) {
+      setPopupPosition({ top: clientY - 200, left: clientX + 200 });
+    } else if (clientY >= 420) {
+      setPopupPosition({ top: clientY - 200, left: clientX });
+    } else if (clientX >= 1023) {
       setPopupPosition({ top: clientY + 100, left: clientX - 200 });
     } else if (clientX <= 341) {
-      setPopupPosition({ top: clientY , left: clientX + 200 });
+      setPopupPosition({ top: clientY, left: clientX + 200 });
     } else if (clientY >= 420) {
-      setPopupPosition({ top: clientY - 200, left: clientX  });
+      setPopupPosition({ top: clientY - 200, left: clientX });
     } else {
       setPopupPosition({ top: clientY + 100, left: clientX + 200 });
     }
-    setShowTodo((prevState) => {
-      if (JSON.stringify(prevState.start) === JSON.stringify(start)) {
-        setIsOpen(!isOpen);
-      } else {
-        setIsOpen(!isOpen);
-      }
+
+    setShowTodo(() => {
+      setIsOpen(!isOpen);
       return { start, end };
     });
 
@@ -78,6 +74,7 @@ const BigCalendar = () => {
     setSelectedEvent(() => {
       return event;
     });
+
     setIsEventOpen(!isEventOpen);
   };
 
@@ -85,8 +82,8 @@ const BigCalendar = () => {
     const response = await getAllTodoItems(todoSchema);
     const eventArray = response?.data?.data.map((item) => {
       const event = {
-        start: moment(new Date(item?.dateTime).toString()).toDate(),
-        end: moment(new Date(item?.dateTime).toString()).toDate(),
+        start: moment(new Date(item?.dateTime)).toDate(),
+        end: moment(new Date(item?.dateTime)).toDate(),
         title: item.title,
         id: item._id,
         category: item.category,
@@ -96,7 +93,11 @@ const BigCalendar = () => {
         new Date()
       );
 
-      if (date1IST < date2IST) {
+      const originalDate = new Date(date2IST);
+      const newDate = new Date(originalDate.getTime() + 1 * 60 * 1000);
+      if (date1IST >= date2IST && date1IST <= newDate) {
+        event.customProp = "complete";
+      } else if (date1IST < newDate) {
         event.customProp = "important";
       } else {
         event.customProp = "normal";
@@ -118,6 +119,17 @@ const BigCalendar = () => {
         className: "important-event",
         style: {
           backgroundColor: "red",
+        },
+      };
+    } else if (event.customProp === "complete") {
+      return {
+        className: "complete-event",
+        style: {
+          backgroundColor: "yellow",
+          animationName: "pulse",
+          animationDuration: "0.5s",
+          animationTimingFunction: "ease-in-out",
+          animationIterationCount: "infinite",
         },
       };
     } else {

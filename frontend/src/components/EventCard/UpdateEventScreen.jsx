@@ -4,8 +4,7 @@ import Button from "@mui/material/Button";
 import {
   formatDateToYYYYMMDDTHHMM,
   formatDateToYYYYMMDD,
-  formatToIndianStandardTime,
-} from "../../utils/isoDateConversion";
+} from "../../utils/dateConversion";
 import EventContext from "../../Context/Event/EventContext";
 import { useUpdateTodoItemMutation } from "../../redux/todo/todoApi";
 import { useNavigate } from "react-router-dom";

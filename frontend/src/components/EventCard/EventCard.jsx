@@ -8,6 +8,7 @@ import DeletePopUpScreen from "./DeletePopUpScreen";
 import { useNavigate } from "react-router-dom";
 import { compareIst } from "../../utils/compareIst";
 
+
 const EventCard = ({
   selectedEvent,
   setSelectedEvent,
@@ -16,6 +17,9 @@ const EventCard = ({
   setIsEventOpen,
 }) => {
   const navigate = useNavigate();
+  const istDateTimeDisplay = new Date(selectedEvent.start)
+    .toDateString()
+    .split(" ");
   const [deletePopUp, setDeletePopUp] = useState(false);
   const [cutThrough, setCutThrough] = useState(false);
   const closePopUp = () => {
@@ -94,14 +98,21 @@ const EventCard = ({
                 />
 
                 <h1
-                  className="text-black text-small pl-1"
+                  className="text-lg pl-1"
                   style={{
-                    resize: "none",
                     textDecoration: cutThrough ? "line-through" : "none",
                   }}
                 >
                   {selectedEvent.title}
                 </h1>
+              </div>
+              <div className="mt-[-20px] mr-[85px]">
+                <h2
+                  className="text-md"
+                  style={{
+                    textDecoration: cutThrough ? "line-through" : "none",
+                  }}
+                >{`${istDateTimeDisplay[0]}, ${istDateTimeDisplay[1]} ${istDateTimeDisplay[2]}`}</h2>
               </div>
             </div>
           </div>
