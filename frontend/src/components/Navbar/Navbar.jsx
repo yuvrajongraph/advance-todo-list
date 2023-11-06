@@ -71,8 +71,7 @@ const Navbar = () => {
 
   return (
     <div
-      className="bg-blue-500 p-4 flex items-center justify-between w-[1530px] ml-[-158px] "
-      style={{ position: "absolute", zIndex: "1000", top: "1px" }}
+      className="absolute bg-blue-500 p-4 flex items-center justify-between w-[1530px] ml-[-158px] top-[1px] "
     >
       <div className="text-white text-2xl font-semibold m-[auto]">
         Advance Todo App
@@ -84,7 +83,7 @@ const Navbar = () => {
         aria-haspopup="listbox"
         aria-expanded="true"
       >
-        {!dark ? <DarkModeIcon fontSize="medium" style={{color:"black"}}/>:<LightModeIcon fontSize="medium" />}
+        {!dark ? <DarkModeIcon fontSize="medium" className="text-black"/>:<LightModeIcon fontSize="medium" />}
       </button>
 
       <div className="relative inline-block text-left">
@@ -99,7 +98,7 @@ const Navbar = () => {
         </button>
 
         {isOpen && (
-          <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 ">
+          <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
             <div
               role="menu"
               aria-orientation="vertical"

@@ -7,12 +7,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeletePopUpScreen from "./DeletePopUpScreen";
 import { useNavigate } from "react-router-dom";
 import { compareIst } from "../../utils/compareIst";
+import "./EventCard.css"
 
 
 const EventCard = ({
   selectedEvent,
   setSelectedEvent,
   popupPosition,
+  setPopupPosition,
   isEventOpen,
   setIsEventOpen,
 }) => {
@@ -22,6 +24,7 @@ const EventCard = ({
     .split(" ");
   const [deletePopUp, setDeletePopUp] = useState(false);
   const [cutThrough, setCutThrough] = useState(false);
+  const dynamicClass = cutThrough ? 'line-through':''
   const closePopUp = () => {
     setIsEventOpen(false);
   };
@@ -55,36 +58,31 @@ const EventCard = ({
       {isEventOpen && (
         <>
           <div
-            className="transform -translate-x-1/2 -translate-y-1/2 z-50 w-1/5 mt-3 "
+            className="fixed transform -translate-x-1/2 -translate-y-1/2  w-1/5 mt-3 "
             style={{
-              position: "fixed",
-              top: popupPosition.top,
-              left: popupPosition.left,
+              top: `${popupPosition.top}px`,
+              left: `${popupPosition.left}px`,
             }}
           >
             <div
-              className="bg-[#E6E6E6] p-4 rounded shadow flex flex-col whitespace-nowrap"
-              style={{  resize:"vertical",overflow:"auto" }}
+              className="bg-[#E6E6E6] p-4 rounded shadow flex flex-col whitespace-nowrap event-popup"
             >
               <div className="flex flex-wrap justify-end">
                 <button onClick={deleteEvent}>
                   <DeleteIcon
                     fontSize="small"
-                    style={{ margin: "0px 10px" }}
-                    className="hover:text-red-500"
+                    className="hover:text-red-500 event-delete-icon"
                   />
                 </button>
                 <button onClick={updateEvent}>
                   <ModeEditIcon
                     fontSize="small"
-                    style={{ margin: "0px 10px" }}
-                    className="hover:text-red-500"
+                    className="hover:text-red-500 event-update-icon"
                   />
                 </button>
                 <MoreHorizIcon
                   fontSize="small"
-                  style={{ margin: "0px 10px" }}
-                  className="hover:text-red-500"
+                  className="hover:text-red-500 event-more-options-icon"
                 />
                 <button onClick={closePopUp}>
                   <CloseIcon fontSize="small" className="hover:text-red-500" />
@@ -98,27 +96,21 @@ const EventCard = ({
                 />
 
                 <h1
-                  className="text-lg pl-1"
-                  style={{
-                    textDecoration: cutThrough ? "line-through" : "none",
-                  }}
+                  className={`text-lg pl-1 ${dynamicClass}`}
                 >
                   {selectedEvent.title}
                 </h1>
               </div>
               <div className="mt-[-20px] mr-[85px]">
                 <h2
-                  className="text-md"
-                  style={{
-                    textDecoration: cutThrough ? "line-through" : "none",
-                  }}
+                  className={`text-md ${dynamicClass}`}
                 >{`${istDateTimeDisplay[0]}, ${istDateTimeDisplay[1]} ${istDateTimeDisplay[2]}`}</h2>
               </div>
             </div>
           </div>
         </>
       )}
-      {deletePopUp && (
+      
         <DeletePopUpScreen
           deletePopUp={deletePopUp}
           setDeletePopUp={setDeletePopUp}
@@ -126,7 +118,7 @@ const EventCard = ({
           selectedEvent={selectedEvent}
           setSelectedEvent={setSelectedEvent}
         />
-      )}
+    
     </>
   );
 };

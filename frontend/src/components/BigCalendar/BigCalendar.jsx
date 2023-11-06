@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import { useGetAllTodoItemsMutation } from "../../redux/todo/todoApi";
+import {  useGetAllTodoItemsQuery } from "../../redux/todo/todoApi";
 import {
   formatDateToYYYYMMDD,
   formatDateToYYYYMMDDTHHMM,
@@ -26,7 +26,7 @@ const BigCalendar = () => {
   const [isEventOpen, setIsEventOpen] = useState(false);
   const [checkReload, setCheckReload] = useState(0);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-  const [getAllTodoItems] = useGetAllTodoItemsMutation();
+  const getAllTodoItems = useGetAllTodoItemsQuery();    
 
   const todoSchema = {
     title: "",
@@ -43,26 +43,31 @@ const BigCalendar = () => {
     dateTime: "",
   });
 
+  const calculatePopupPosition = (clientX, clientY) =>{
+    const offset = 200;
+    const screenLimitX = window.innerWidth - offset;
+    const screenLimitY = window.innerHeight - offset;
+
+    let top = clientY;
+    let left = clientX;
+
+    if (clientY >= screenLimitY) {
+      top -= offset;
+    }
+
+    if (clientX >= screenLimitX) {
+      left -= offset;
+    }
+
+    setPopupPosition({ top, left });
+  }
+
+
   const handleSlot = ({ start, end, box }) => {
     setIsEventOpen(false);
     const { clientX, clientY } = box;
-    console.log(clientX, "=====", clientY);
-    if (clientY >= 259 && clientX >= 1023) {
-      setPopupPosition({ top: clientY - 200, left: clientX - 200 });
-    } else if (clientX <= 341 && clientY >= 420) {
-      setPopupPosition({ top: clientY - 200, left: clientX + 200 });
-    } else if (clientY >= 420) {
-      setPopupPosition({ top: clientY - 200, left: clientX });
-    } else if (clientX >= 1023) {
-      setPopupPosition({ top: clientY + 100, left: clientX - 200 });
-    } else if (clientX <= 341) {
-      setPopupPosition({ top: clientY, left: clientX + 200 });
-    } else if (clientY >= 420) {
-      setPopupPosition({ top: clientY - 200, left: clientX });
-    } else {
-      setPopupPosition({ top: clientY + 100, left: clientX + 200 });
-    }
-
+    calculatePopupPosition(clientX,clientY);
+   
     setShowTodo(() => {
       setIsOpen(!isOpen);
       return { start, end };
@@ -74,7 +79,7 @@ const BigCalendar = () => {
 
   const handleCalendarEvent = (event, e) => {
     const { clientX, clientY } = e;
-    setPopupPosition({ top: clientY + 25, left: clientX + 250 });
+    calculatePopupPosition(clientX,clientY);
     setIsOpen(false);
     setSelectedEvent(() => {
       return event;
@@ -84,8 +89,9 @@ const BigCalendar = () => {
   };
 
   const getTodoEvents = async () => {
-    const response = await getAllTodoItems(todoSchema);
-    const eventArray = response?.data?.data.map((item) => {
+
+    const response = await getAllTodoItems.refetch();
+    const eventArray = response?.data?.data?.map((item) => {
       const event = {
         start: moment(new Date(item?.dateTime)).toDate(),
         end: moment(new Date(item?.dateTime)).toDate(),
@@ -100,17 +106,6 @@ const BigCalendar = () => {
 
       const originalDate = new Date(date2IST);
       const newDate = new Date(originalDate.getTime() + 1 * 60 * 1000);
-      if (d === 0) {
-        const timeDiff =
-          new Date(date1IST).getTime() - moment(new Date()).toDate().getTime();
-        // console.log(timeDiff);
-
-        if (timeDiff > 0) {
-          setTimeout(function () {
-            window.location.reload();
-          }, timeDiff);
-        }
-      }
 
       if (date1IST >= date2IST && date1IST <= newDate) {
         event.customProp = "important";
@@ -198,7 +193,7 @@ const BigCalendar = () => {
   return (
     <>
       <div className=" relative w-2/3 mt-3 z-10">
-        <div className="absolute top-[80px] w-[1526px] ml-[-155px] h-[630px]" style={{position:"fixed" }}  >
+        <div className="fixed top-[80px] w-[1526px] ml-[-155px] h-[630px]"   >
           {dark ? <StyledCalendar
             localizer={localizer}
             events={todos}
@@ -230,12 +225,14 @@ const BigCalendar = () => {
           handleSlot={handleSlot}
           setIsOpen={setIsOpen}
           popupPosition={popupPosition}
+          setPopupPosition={setPopupPosition}
         />
         {selectedEvent && (
           <EventCard
             selectedEvent={selectedEvent}
             setSelectedEvent={setSelectedEvent}
             popupPosition={popupPosition}
+            setPopupPosition={setPopupPosition}
             isEventOpen={isEventOpen}
             setIsEventOpen={setIsEventOpen}
           />

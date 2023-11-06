@@ -1,0 +1,10 @@
+/* styles.css */
+.custom-label {
+    color: blue; /* Default color */
+    background-color: red;
+  }
+  
+  .custom-label-focused {
+    color: green; /* Change color when focused */
+  }
+  

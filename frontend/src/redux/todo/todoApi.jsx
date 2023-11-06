@@ -4,7 +4,7 @@ const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BACKEND_URL,
   prepareHeaders: (headers, { getState }) => {
     const token = getState().users?.user?.token;
-    if(!token) return headers;
+    if (!token) return headers;
     headers.set("Authorization", `Bearer ${token}`);
     return headers;
   },
@@ -17,6 +17,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const todoApi = createApi({
   reducerPath: "todoApi",
+  tagTypes: ["todos"],
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     createTodoItem: builder.mutation({
@@ -24,48 +25,47 @@ export const todoApi = createApi({
         url: `/todo-list`,
         method: "POST",
         body: {
-          ...(title && { title }),
-          ...(status && { status }),
-          ...(category && { category }),
-          ...(dateTime && { dateTime }),
+          title,
+          status,
+          category,
+          dateTime,
         },
       }),
+      invalidatesTags: ["todos"],
     }),
     updateTodoItem: builder.mutation({
       query: ({ id, title, status, category, dateTime }) => ({
         url: `/todo-list/${id}`,
         method: "PATCH",
         body: {
-          ...(title && { title }),
-          ...(status && { status }),
-          ...(category && { category }),
-          ...(dateTime && { dateTime }),
+          title,
+          status,
+          category,
+          dateTime,
         },
       }),
+      invalidatesTags: ["todos"],
     }),
-    getSingleTodoItem: builder.mutation({
+    getSingleTodoItem: builder.query({
       query: ({ id }) => ({
         url: `/todo-list/${id}`,
         method: "GET",
       }),
+      providesTags: ["todos"],
     }),
-    getAllTodoItems: builder.mutation({
-      query: ({ title, status, category, dateTime }) => ({
+    getAllTodoItems: builder.query({
+      query: () => ({
         url: `/todo-list`,
         method: "GET",
-        params: {
-          ...(title && { title }),
-          ...(status && { status }),
-          ...(category && { category }),
-          ...(dateTime && { dateTime }),
-        },
       }),
+      providesTags: ["todos"],
     }),
     deleteTodoItem: builder.mutation({
       query: ({ id }) => ({
         url: `/todo-list/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["todos"],
     }),
   }),
 });
@@ -74,6 +74,6 @@ export const {
   useCreateTodoItemMutation,
   useUpdateTodoItemMutation,
   useDeleteTodoItemMutation,
-  useGetSingleTodoItemMutation,
-  useGetAllTodoItemsMutation
+  useGetAllTodoItemsQuery,
+  useGetSingleTodoItemQuery,
 } = todoApi;

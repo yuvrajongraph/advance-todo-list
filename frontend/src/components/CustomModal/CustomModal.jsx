@@ -9,6 +9,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { formatDateToYYYYMMDDTHHMM } from "../../utils/dateConversion";
+import "./CustomModal.css"
 
 const CustomModal = ({
   showTodo,
@@ -17,6 +18,7 @@ const CustomModal = ({
   setInput,
   setIsOpen,
   popupPosition,
+  setPopupPosition,
 }) => {
   // const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -44,9 +46,9 @@ const CustomModal = ({
   };
 
   const handleDateTime = (e) => {
-    setInput(()=>{
-        return {...input,dateTime:e.$d}
-    })
+    setInput(() => {
+      return { ...input, dateTime: e.$d };
+    });
   };
 
   const saveTodo = async (e) => {
@@ -71,7 +73,7 @@ const CustomModal = ({
     });
     setTimeout(() => {
       window.location.reload();
-    }, 1500);
+    }, 1000);
   };
 
   //   const closeModal = () => {
@@ -81,22 +83,18 @@ const CustomModal = ({
   return (
     <>
       {/* {isOpen && (
-        <div
-          className="fixed top-0 right-0 bottom-0 left-0 bg-black opacity-50 z-50"
-          onClick={closeModal}
-        />
+        
       )} */}
       {isOpen && (
         <>
           <div
-            className="transform -translate-x-1/2 -translate-y-1/2 z-50 w-1/5 mt-3"
+            className=" fixed transform -translate-x-1/2 -translate-y-1/2  w-1/5 mt-3"
             style={{
-              position: "fixed",
-              top: popupPosition.top,
-              left: popupPosition.left,
+              top: `${popupPosition.top}px`,
+              left: `${popupPosition.left}px`,
             }}
           >
-            <div className="bg-[#E6E6E6] p-4 rounded shadow ">
+            <div className="bg-[#E6E6E6] p-4 rounded shadow">
               <div className="mb-4 ">
                 <label
                   className="block text-gray-600 text-sm font-semibold mb-2"
@@ -161,16 +159,13 @@ const CustomModal = ({
                         Description
                       </label>
                       <input
-                        className="w-full border p-2 rounded"
+                        className="description w-full border p-2 rounded"
                         type="text"
                         id="description"
                         name="description"
                         placeholder="Add description"
                         value={description}
                         onChange={handleInputEvent}
-                        style={{
-                          padding: "20px",
-                        }}
                       />
                     </div>
                   </>

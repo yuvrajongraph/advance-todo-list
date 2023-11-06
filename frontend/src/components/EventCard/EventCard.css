@@ -1,0 +1,12 @@
+.event-popup {
+  resize: horizontal;
+  overflow: auto;
+}
+
+.event-delete-icon,
+.event-update-icon,
+.event-more-options-icon {
+  margin: 0px 10px;
+}
+
+

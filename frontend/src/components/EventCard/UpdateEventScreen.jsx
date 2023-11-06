@@ -15,6 +15,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import DarkThemeContext from "../../Context/DarkTheme/DarkThemeContext";
+import "./UpdateEventScreen.css"
 
 
 const UpdateEventScreen = () => {
@@ -28,6 +29,24 @@ const UpdateEventScreen = () => {
     category: selectedEvent.category,
     dateTime: formatDateToYYYYMMDDTHHMM(new Date(selectedEvent.start)),
   });
+  const styleTextField = dark? {
+    'label.Mui-focused': {
+      color: 'blue', 
+    },
+    'label': {
+      color: 'red', 
+      
+    },
+    '.MuiInputBase-input':{
+      color:'white',
+      backgroundColor:'black'
+    },
+    '.MuiButtonBase-root':{
+      color:'white',
+      backgroundColor:'black'
+    }
+  }:{}
+  const dynamicClass = dark ? 'bg-[#282828] text-white':'';
 
   const { title, category } = input;
   const handleInputEvent = (e) => {
@@ -66,7 +85,7 @@ const UpdateEventScreen = () => {
   };
   return (
     <>
-      <div className="relative p-4 space-y-4 top-10" style={{}}>
+      <div className={`relative w-[1530px] ml-[-158px] h-[645px] p-4 space-y-4 top-10 overflow-hidden ${dynamicClass}`} >
         <h2 className="text-2xl font-semibold">Update Event</h2>
 
         <TextField
@@ -76,6 +95,8 @@ const UpdateEventScreen = () => {
           name="title"
           size="small"
           id="title"
+          sx={styleTextField}
+          className="bg-white"
           value={title}
           onChange={handleInputEvent}
         />
@@ -87,6 +108,7 @@ const UpdateEventScreen = () => {
           name="category"
           id="category"
           size="small"
+          sx={styleTextField}
           value={category}
           onChange={handleInputEvent}
         />
@@ -98,6 +120,7 @@ const UpdateEventScreen = () => {
               value={dayjs(input.dateTime)}
               onChange={handleDateTime}
               format="YYYY-MM-DDThh:mm"
+              sx={styleTextField}
               slotProps={{ textField: { size: 'small' } }}
             />
           </DemoContainer>

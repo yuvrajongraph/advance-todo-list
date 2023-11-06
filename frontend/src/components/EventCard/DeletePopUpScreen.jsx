@@ -4,6 +4,8 @@ import Modal from "@mui/material/Modal";
 import { useDeleteTodoItemMutation } from "../../redux/todo/todoApi";
 import { toast } from "react-toastify";
 
+
+
 const DeletePopUpScreen = ({
   deletePopUp,
   setDeletePopUp,
@@ -17,7 +19,6 @@ const DeletePopUpScreen = ({
   };
 
   const confirmDeleteEvent = async (e) => {
-    e.preventDefault();
     setDeletePopUp(false);
     const response = await deleteTodoItem({ id: selectedEvent?.id });
     if (response.data) {
@@ -31,13 +32,12 @@ const DeletePopUpScreen = ({
   };
   return (
     <>
-      <Modal open={open} onClose={handleClose}>
+      <Modal open={deletePopUp} onClose={handleClose}>
         <div
-          className="transform -translate-x-1/2 -translate-y-1/2 z-50 w-1/5 mt-3"
+          className="fixed transform -translate-x-1/2 -translate-y-1/2 z-50 w-1/5 mt-3"
           style={{
-            position: "fixed",
-            top: popupPosition.top,
-            left: popupPosition.left,
+            top: `${popupPosition.top}px`,
+            left: `${popupPosition.left}px`,
           }}
         >
           <div className="bg-[#E6E6E6] p-4 rounded shadow ">
@@ -54,7 +54,8 @@ const DeletePopUpScreen = ({
             <Button
               variant="contained"
               color="primary"
-              style={{ margin: "5px 5px" }}
+              className="m-3"
+              style={{margin:"5px"}}
               onClick={confirmDeleteEvent}
             >
               Delete
