@@ -64,7 +64,7 @@ const EventCard = ({
           >
             <div
               className="bg-[#E6E6E6] p-4 rounded shadow flex flex-col whitespace-nowrap"
-              style={{ resize: "horizontal", overflow: "auto" }}
+              style={{  resize:"vertical",overflow:"auto" }}
             >
               <div className="flex flex-wrap justify-end">
                 <button onClick={deleteEvent}>

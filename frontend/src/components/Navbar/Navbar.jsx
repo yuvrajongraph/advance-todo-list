@@ -4,23 +4,28 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   useResetPasswordMailMutation,
   useGoogleAuthMutation,
-  useLogoutUserMutation
+  useLogoutUserMutation,
 } from "../../redux/auth/authApi";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { logoutSuccess } from "../../redux/auth/authSlice";
-import { Cookies } from 'react-cookie';
+import { Cookies } from "react-cookie";
+import { useContext } from "react";
+import DarkThemeContext from "../../Context/DarkTheme/DarkThemeContext";
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
 
 const Navbar = () => {
   const [authenticated, cookie] = useAuth();
   const navigate = useNavigate();
-  const cookies = new Cookies(); 
+  const cookies = new Cookies();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const { dark, toggleTheme } = useContext(DarkThemeContext);
   const [resetPasswordMail, { data, isError, isSuccess }] =
     useResetPasswordMailMutation();
-    const [logoutUser] = useLogoutUserMutation();
+  const [logoutUser] = useLogoutUserMutation();
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -35,21 +40,21 @@ const Navbar = () => {
     }
   };
 
-  const handleLogout = async(e) =>{
+  const handleLogout = async (e) => {
     e.preventDefault();
     toggleDropdown();
     const response = await logoutUser();
     if (response?.data) {
       toast.success(response?.data?.message);
-      setTimeout(()=>{
-      dispatch(logoutSuccess());
-      cookies.remove('userData');
-      window.location.reload();
-      },1000)
+      setTimeout(() => {
+        dispatch(logoutSuccess());
+        cookies.remove("userData");
+        window.location.reload();
+      }, 1000);
     } else {
       toast.error(response?.error?.data?.error);
     }
-  }
+  };
 
   const userName = cookie?.userData?.details?.name.trim()?.replace(/ +/g, " ");
   const userArray = userName?.split(" ");
@@ -64,12 +69,24 @@ const Navbar = () => {
     return accumulator + currentCharacter;
   }, "");
 
-
   return (
-    <div className="bg-blue-500 p-4 flex items-center justify-between">
+    <div
+      className="bg-blue-500 p-4 flex items-center justify-between w-[1530px] ml-[-158px] "
+      style={{ position: "absolute", zIndex: "1000", top: "1px" }}
+    >
       <div className="text-white text-2xl font-semibold m-[auto]">
         Advance Todo App
       </div>
+      <button
+        type="button"
+        onClick={toggleTheme}
+        className="bg-blue-500 w-10 h-10 rounded-s flex items-center justify-center text-white font-semibold text-xl mr-[10px]"
+        aria-haspopup="listbox"
+        aria-expanded="true"
+      >
+        {!dark ? <DarkModeIcon fontSize="medium" style={{color:"black"}}/>:<LightModeIcon fontSize="medium" />}
+      </button>
+
       <div className="relative inline-block text-left">
         <button
           type="button"
@@ -82,7 +99,7 @@ const Navbar = () => {
         </button>
 
         {isOpen && (
-          <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 " style={{zIndex:"1"}}>
+          <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 ">
             <div
               role="menu"
               aria-orientation="vertical"

@@ -14,12 +14,14 @@ import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import DarkThemeContext from "../../Context/DarkTheme/DarkThemeContext";
 
 
 const UpdateEventScreen = () => {
   const calendarEvent = useContext(EventContext);
   const { selectedEvent, setSelectedEvent } = calendarEvent;
   const [updateTodoItem] = useUpdateTodoItemMutation();
+  const {dark,toggleTheme} = useContext(DarkThemeContext);
   const navigate = useNavigate();
   const [input, setInput] = useState({
     title: selectedEvent.title,
@@ -64,7 +66,7 @@ const UpdateEventScreen = () => {
   };
   return (
     <>
-      <div className="p-4 space-y-4">
+      <div className="relative p-4 space-y-4 top-10" style={{}}>
         <h2 className="text-2xl font-semibold">Update Event</h2>
 
         <TextField

@@ -19,7 +19,7 @@ export const formatDateToYYYYMMDDTHHMM = (date) => {
   const amOrPm = hours >= 12 ? "PM" : "AM";
   const formattedHours = hours % 12 || 12;
 
-  const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+  const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:00`;
   return formattedDate;
 };
 
