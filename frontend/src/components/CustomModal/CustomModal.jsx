@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useCreateTodoItemMutation } from "../../redux/todo/todoApi";
 import { toast } from "react-toastify";
 import ModalNavbar from "./ModalNavbar";
@@ -9,7 +9,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { formatDateToYYYYMMDDTHHMM } from "../../utils/dateConversion";
-import "./CustomModal.css"
+import "./CustomModal.css";
+
 
 const CustomModal = ({
   showTodo,
@@ -24,10 +25,11 @@ const CustomModal = ({
 
   const [selectedOption, setSelectedOption] = useState("normal");
   const options = ["normal", "food", "other"];
-  const [activeLink, setActiveLink] = useState("category");
+  const [activeLink, setActiveLink] = useState("todo");
 
   const { title, category, dateTime, description } = input;
   // const [selectedEvent, setSelectedEvent] = useState(null);
+
 
   const [createTodoItem] = useCreateTodoItemMutation();
 
@@ -55,6 +57,7 @@ const CustomModal = ({
     e.preventDefault();
     const response = await createTodoItem({
       title,
+      type: activeLink,
       status: "open",
       category: selectedOption,
       dateTime: dateTime,
@@ -116,33 +119,78 @@ const CustomModal = ({
                 setActiveLink={setActiveLink}
               />
               <form>
-                {activeLink === "category" ? (
-                  <div className="mb-4 ">
-                    <label
-                      className="block text-gray-600 text-sm font-semibold mb-2"
-                      htmlFor="Category"
-                    >
-                      Category
-                    </label>
-                    <select
-                      value={selectedOption}
-                      onChange={handleOptionChange}
-                      className="mt-2 p-2 w-full border rounded shadow-sm"
-                    >
-                      {options.map((option, index) => (
-                        <option key={index} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                {activeLink === "todo" ? (
+                  <>
+                    <div className="mb-4 ">
+                      <label
+                        className="block text-gray-600 text-sm font-semibold mb-2"
+                        htmlFor="Category"
+                      >
+                        Category
+                      </label>
+                      <select
+                        value={selectedOption}
+                        onChange={handleOptionChange}
+                        className="mt-2 p-2 w-full border rounded shadow-sm"
+                      >
+                        {options.map((option, index) => (
+                          <option key={index} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="mb-4 ">
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={["DateTimePicker"]}>
+                          <DateTimePicker
+                            label="Date Time"
+                            value={dayjs(dateTime)}
+                            onChange={handleDateTime}
+                            format="YYYY-MM-DDThh:mm"
+                            slotProps={{ textField: { size: "small" } }}
+                          />
+                        </DemoContainer>
+                      </LocalizationProvider>
+                    </div>
+                    <div className="mb-4 ">
+                      <label
+                        className="block text-gray-600 text-sm font-semibold mb-2"
+                        htmlFor="Description"
+                      >
+                        Description
+                      </label>
+                      <input
+                        className="description w-full border p-2 rounded"
+                        type="text"
+                        id="description"
+                        name="description"
+                        placeholder="Add description"
+                        value={description}
+                        onChange={handleInputEvent}
+                      />
+                    </div>
+                  </>
                 ) : (
                   <>
                     <div className="mb-4 ">
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={["DateTimePicker"]}>
                           <DateTimePicker
-                            label="Date Time"
+                            label="Start Time"
+                            value={dayjs(dateTime)}
+                            onChange={handleDateTime}
+                            format="YYYY-MM-DDThh:mm"
+                            slotProps={{ textField: { size: "small" } }}
+                          />
+                        </DemoContainer>
+                      </LocalizationProvider>
+                    </div>
+                    <div className="mb-4 ">
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={["DateTimePicker"]}>
+                          <DateTimePicker
+                            label="End Time"
                             value={dayjs(dateTime)}
                             onChange={handleDateTime}
                             format="YYYY-MM-DDThh:mm"
@@ -176,7 +224,7 @@ const CustomModal = ({
                     type="submit"
                     onClick={saveTodo}
                   >
-                    Save Todo
+                    Save Event
                   </button>
                 </div>
               </form>

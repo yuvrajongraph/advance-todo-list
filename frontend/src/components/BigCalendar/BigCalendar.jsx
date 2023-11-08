@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import {  useGetAllTodoItemsQuery } from "../../redux/todo/todoApi";
+import { useGetAllTodoItemsQuery } from "../../redux/todo/todoApi";
 import {
   formatDateToYYYYMMDD,
   formatDateToYYYYMMDDTHHMM,
@@ -12,21 +12,23 @@ import EventContext from "../../Context/Event/EventContext";
 import { compareIst } from "../../utils/compareIst";
 import { styled } from "@mui/material";
 import DarkThemeContext from "../../Context/DarkTheme/DarkThemeContext";
+import { toast } from "react-toastify";
 
 const localizer = momentLocalizer(moment);
-let c = 0, d=0;
+let c = 0,
+  d = 0;
 
 const BigCalendar = () => {
   const [todos, setTodos] = useState([]);
   const calendarEvent = useContext(EventContext);
   const { selectedEvent, setSelectedEvent } = calendarEvent;
-  const {dark, toggleTheme} = useContext(DarkThemeContext);
+  const { dark, toggleTheme } = useContext(DarkThemeContext);
   const [showTodo, setShowTodo] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [isEventOpen, setIsEventOpen] = useState(false);
   const [checkReload, setCheckReload] = useState(0);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-  const getAllTodoItems = useGetAllTodoItemsQuery();    
+  const getAllTodoItems = useGetAllTodoItemsQuery();
 
   const todoSchema = {
     title: "",
@@ -43,7 +45,7 @@ const BigCalendar = () => {
     dateTime: "",
   });
 
-  const calculatePopupPosition = (clientX, clientY) =>{
+  const calculatePopupPosition = (clientX, clientY) => {
     const offset = 200;
     const screenLimitX = window.innerWidth - offset;
     const screenLimitY = window.innerHeight - offset;
@@ -60,14 +62,13 @@ const BigCalendar = () => {
     }
 
     setPopupPosition({ top, left });
-  }
-
+  };
 
   const handleSlot = ({ start, end, box }) => {
     setIsEventOpen(false);
     const { clientX, clientY } = box;
-    calculatePopupPosition(clientX,clientY);
-   
+    calculatePopupPosition(clientX, clientY);
+
     setShowTodo(() => {
       setIsOpen(!isOpen);
       return { start, end };
@@ -79,7 +80,7 @@ const BigCalendar = () => {
 
   const handleCalendarEvent = (event, e) => {
     const { clientX, clientY } = e;
-    calculatePopupPosition(clientX,clientY);
+    calculatePopupPosition(clientX, clientY);
     setIsOpen(false);
     setSelectedEvent(() => {
       return event;
@@ -89,7 +90,6 @@ const BigCalendar = () => {
   };
 
   const getTodoEvents = async () => {
-
     const response = await getAllTodoItems.refetch();
     const eventArray = response?.data?.data?.map((item) => {
       const event = {
@@ -98,6 +98,7 @@ const BigCalendar = () => {
         title: item.title,
         id: item._id,
         category: item.category,
+        type:item.type
       };
       const { date1IST, date2IST } = compareIst(
         new Date(event.start),
@@ -108,6 +109,7 @@ const BigCalendar = () => {
       const newDate = new Date(originalDate.getTime() + 1 * 60 * 1000);
 
       if (date1IST >= date2IST && date1IST <= newDate) {
+        toast.success("alarm for reminder");
         event.customProp = "important";
         setTimeout(() => {
           window.location.reload();
@@ -154,68 +156,63 @@ const BigCalendar = () => {
   };
 
   const StyledCalendar = styled(Calendar)`
-   .rbc-day-bg {
-    background-color: #282828;
-    color: white;
-  }
-  .rbc-button-link{
-    color:white;
-  }
-  .rbc-header{
-    background-color: #282828;
-    color: white;
-  }
-  .rbc-time-slot{
-    background-color: #282828;
-    color: white;
-  }
-  .rbc-label{
-    background-color: #282828;
-   color:red
-  }
-  .rbc-header span{
-
-    color: red;
-  }
-  .rbc-toolbar {
-    background-color: #282828;
-    color: red;
-  }
-  .rbc-toolbar button{
-    
-    color: red;
-  }
-   .rbc-event {
-    background-color: #3174ad;;
-  }
-`;
+    .rbc-day-bg,
+    .rbc-time-slot,
+    .rbc-header {
+      background-color: #282828;
+      color: white;
+    }
+    .rbc-button-link {
+      color: white;
+    }
+    .rbc-label {
+      background-color: #282828;
+      color: red;
+    }
+    .rbc-header span {
+      color: red;
+    }
+    .rbc-toolbar {
+      background-color: #282828;
+      color: red;
+    }
+    .rbc-toolbar button {
+      color: red;
+    }
+    .rbc-event {
+      background-color: #3174ad;
+    }
+  `;
 
   return (
     <>
       <div className=" relative w-2/3 mt-3 z-10">
-        <div className="fixed top-[80px] w-[1526px] ml-[-155px] h-[630px]"   >
-          {dark ? <StyledCalendar
-            localizer={localizer}
-            events={todos}
-            startAccessor="start"
-            endAccessor="end"
-            onSelectSlot={handleSlot}
-            selectable
-            onSelectEvent={handleCalendarEvent}
-            views={['month', 'week', 'day']}
-            eventPropGetter={eventStyleGetter}
-          />: <Calendar
-          localizer={localizer}
-          events={todos}
-          startAccessor="start"
-          endAccessor="end"
-          onSelectSlot={handleSlot}
-          selectable
-          onSelectEvent={handleCalendarEvent}
-          views={['month', 'week', 'day']}
-          eventPropGetter={eventStyleGetter}
-        />}
-          
+        <div className="fixed top-[80px] w-[1526px] ml-[-155px] h-[630px]">
+          {dark ? (
+            <StyledCalendar
+              localizer={localizer}
+              events={todos}
+              startAccessor="start"
+              endAccessor="end"
+              onSelectSlot={handleSlot}
+              selectable
+              onSelectEvent={handleCalendarEvent}
+              views={["month", "week", "day"]}
+              eventPropGetter={eventStyleGetter}
+            />
+          ) : (
+            <Calendar
+              localizer={localizer}
+              events={todos}
+              startAccessor="start"
+              endAccessor="end"
+              onSelectSlot={handleSlot}
+              selectable
+              onSelectEvent={handleCalendarEvent}
+              views={["month", "week", "day"]}
+              eventPropGetter={eventStyleGetter}
+            />
+          )}
         </div>
         <CustomModal
           showTodo={showTodo}

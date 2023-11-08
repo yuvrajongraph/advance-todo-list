@@ -10,20 +10,20 @@ const ModalNavbar = ({ activeLink, setActiveLink }) => {
       <div className=" p-4">
         <nav className="flex justify-center space-x-6">
           <button
-            onClick={() => handleNavClick("category")}
+            onClick={() => handleNavClick("todo")}
             className={`${
-              activeLink === "category" ? "border-b-2 border-white" : ""
+              activeLink === "todo" ? "border-b-2 border-white" : ""
             } focus:outline-none hover:text-blue-500`}
           >
-            Category
+            Todo
           </button>
           <button
-            onClick={() => handleNavClick("dateTime")}
+            onClick={() => handleNavClick("appointment")}
             className={`${
-              activeLink === "dateTime" ? "border-b-2 border-white" : ""
+              activeLink === "appointment" ? "border-b-2 border-white" : ""
             } focus:outline-none hover:text-blue-500`}
           >
-            Date Time
+            Appointment
           </button>
         </nav>
       </div>

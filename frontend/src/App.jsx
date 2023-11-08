@@ -36,7 +36,7 @@ function App() {
         {authenticated ? (
           <Route path="/" element={<AppLayout />} >
             <Route path="/" element={<BigCalendar />} />
-            <Route path="/update" element={<UpdateEventScreen />} />
+            <Route path="/update/:type" element={<UpdateEventScreen />} />
           </Route>
         ) : (
           <Route path="/" element={<Navigate to={"/auth/login"} />} />

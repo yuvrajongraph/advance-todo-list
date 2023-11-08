@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SquareIcon from "@mui/icons-material/Square";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
@@ -8,7 +8,6 @@ import DeletePopUpScreen from "./DeletePopUpScreen";
 import { useNavigate } from "react-router-dom";
 import { compareIst } from "../../utils/compareIst";
 import "./EventCard.css"
-
 
 const EventCard = ({
   selectedEvent,
@@ -38,7 +37,7 @@ const EventCard = ({
   const updateEvent = (e) => {
     e.preventDefault();
     setIsEventOpen(false);
-    navigate("/update");
+    navigate(`/update/${selectedEvent.type}`);
   };
 
   useEffect(() => {

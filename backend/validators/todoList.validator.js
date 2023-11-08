@@ -6,6 +6,7 @@ const status =  Joi.string().valid("open", "close").default("open");
 const category =  Joi.string().valid("normal", "food", "other");
 const dateTime =  Joi.string().isoDate();
 const title = Joi.string();
+const type = Joi.string();
 
 // schema of create todo item in request body for validation using joi
 const createTodoItemSchema = async (req, res, next) => {
@@ -14,6 +15,7 @@ const createTodoItemSchema = async (req, res, next) => {
     status,
     category: category.required(),
     dateTime: dateTime.required(),
+    type:type.required()
   });
   validateRequest(req, res, next, schema, "body");
 };
@@ -24,7 +26,8 @@ const updateTodoItemSchema = async (req, res, next) => {
     title,
     status,
     category,
-    dateTime
+    dateTime,
+    type
   });
   validateRequest(req, res, next, schema, "body");
 };
@@ -43,7 +46,8 @@ const getTodoItemByQuerySchema = async (req, res, next) => {
     title,
     status,
     category,
-    dateTime
+    dateTime,
+    type
   });
   validateRequest(req, res, next, schema, "query");
 };

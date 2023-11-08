@@ -15,39 +15,40 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import DarkThemeContext from "../../Context/DarkTheme/DarkThemeContext";
-import "./UpdateEventScreen.css"
-
+import { useParams } from "react-router-dom";
+import "./UpdateEventScreen.css";
 
 const UpdateEventScreen = () => {
   const calendarEvent = useContext(EventContext);
+  const { type } = useParams();
   const { selectedEvent, setSelectedEvent } = calendarEvent;
   const [updateTodoItem] = useUpdateTodoItemMutation();
-  const {dark,toggleTheme} = useContext(DarkThemeContext);
+  const { dark, toggleTheme } = useContext(DarkThemeContext);
   const navigate = useNavigate();
   const [input, setInput] = useState({
     title: selectedEvent.title,
     category: selectedEvent.category,
     dateTime: formatDateToYYYYMMDDTHHMM(new Date(selectedEvent.start)),
   });
-  const styleTextField = dark? {
-    'label.Mui-focused': {
-      color: 'blue', 
-    },
-    'label': {
-      color: 'red', 
-      
-    },
-    '.MuiInputBase-input':{
-      color:'white',
-      backgroundColor:'black'
-    },
-    '.MuiButtonBase-root':{
-      color:'white',
-      backgroundColor:'black'
-    }
-  }:{}
-  const dynamicClass = dark ? 'bg-[#282828] text-white':'';
-
+  const styleTextField = dark
+    ? {
+        "label.Mui-focused": {
+          color: "blue",
+        },
+        label: {
+          color: "red",
+        },
+        ".MuiInputBase-input": {
+          color: "white",
+          backgroundColor: "black",
+        },
+        ".MuiButtonBase-root": {
+          color: "white",
+          backgroundColor: "black",
+        },
+      }
+    : {};
+  const dynamicClass = dark ? "bg-[#282828] text-white" : "";
   const { title, category } = input;
   const handleInputEvent = (e) => {
     const name = e.target.name;
@@ -55,19 +56,19 @@ const UpdateEventScreen = () => {
     setInput(() => {
       return { ...input, [name]: value };
     });
-    
   };
 
   const handleDateTime = (e) => {
-    setInput(()=>{
-        return {...input,dateTime:e.$d}
-    })
+    setInput(() => {
+      return { ...input, dateTime: e.$d };
+    });
   };
 
   const confirmUpdateEvent = async (e) => {
     const response = await updateTodoItem({
       id: selectedEvent.id,
       title,
+      type:selectedEvent.type,
       status: "open",
       category,
       dateTime: input.dateTime,
@@ -78,72 +79,120 @@ const UpdateEventScreen = () => {
     } else {
       toast.error(response?.error?.data?.error);
     }
-      setTimeout(() => {
-        navigate('/');
-        window.location.reload();
-      }, 1000);
+    setTimeout(() => {
+      navigate("/");
+      window.location.reload();
+    }, 1000);
   };
   return (
     <>
-      <div className={`relative w-[1530px] ml-[-158px] h-[645px] p-4 space-y-4 top-10 overflow-hidden ${dynamicClass}`} >
-        <h2 className="text-2xl font-semibold">Update Event</h2>
-
-        <TextField
-          label="Title"
-          variant="outlined"
-          fullWidth
-          name="title"
-          size="small"
-          id="title"
-          sx={styleTextField}
-          className="bg-white"
-          value={title}
-          onChange={handleInputEvent}
-        />
-
-        <TextField
-          label="Category"
-          variant="outlined"
-          fullWidth
-          name="category"
-          id="category"
-          size="small"
-          sx={styleTextField}
-          value={category}
-          onChange={handleInputEvent}
-        />
-
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={["DateTimePicker"]}>
-            <DateTimePicker
-              label="Date Time"
-              value={dayjs(input.dateTime)}
-              onChange={handleDateTime}
-              format="YYYY-MM-DDThh:mm"
-              sx={styleTextField}
-              slotProps={{ textField: { size: 'small' } }}
-            />
-          </DemoContainer>
-        </LocalizationProvider>
-
-        {/* <TextField
-        label="Date"
-        type="dateTime-local"
-        value={input.dateTime}
-        onChange={handleInputEvent}
-        InputLabelProps={{
-          shrink: true,
-        }}
-      /> */}
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={confirmUpdateEvent}
+      {type == "todo" ? (
+        <div
+          className={`relative w-[1530px] ml-[-158px] h-[645px] p-4 space-y-4 top-10 overflow-hidden ${dynamicClass}`}
         >
-          Update Event
-        </Button>
-      </div>
+          <h2 className="text-2xl font-semibold">Update Todo</h2>
+
+          <TextField
+            label="Title"
+            variant="outlined"
+            fullWidth
+            name="title"
+            size="small"
+            id="title"
+            sx={styleTextField}
+            className="bg-white"
+            value={title}
+            onChange={handleInputEvent}
+          />
+
+          <TextField
+            label="Category"
+            variant="outlined"
+            fullWidth
+            name="category"
+            id="category"
+            size="small"
+            sx={styleTextField}
+            value={category}
+            onChange={handleInputEvent}
+          />
+
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DateTimePicker"]}>
+              <DateTimePicker
+                label="Date Time"
+                value={dayjs(input.dateTime)}
+                onChange={handleDateTime}
+                format="YYYY-MM-DDThh:mm"
+                sx={styleTextField}
+                slotProps={{ textField: { size: "small" } }}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={confirmUpdateEvent}
+          >
+            Update Event
+          </Button>
+        </div>
+      ) : (
+        <>
+          <div
+            className={`relative w-[1530px] ml-[-158px] h-[645px] p-4 space-y-4 top-10 overflow-hidden ${dynamicClass}`}
+          >
+            <h2 className="text-2xl font-semibold">Update Appointment</h2>
+
+            <TextField
+              label="Title"
+              variant="outlined"
+              fullWidth
+              name="title"
+              size="small"
+              id="title"
+              sx={styleTextField}
+              className="bg-white"
+              value={title}
+              onChange={handleInputEvent}
+            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={["DateTimePicker"]}>
+                <DateTimePicker
+                  label="Start Time"
+                  value={dayjs(input.dateTime)}
+                  onChange={handleDateTime}
+                  format="YYYY-MM-DDThh:mm"
+                  sx={styleTextField}
+                  slotProps={{ textField: { size: "small" } }}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={["DateTimePicker"]}>
+                <DateTimePicker
+                  label="End Time"
+                  value={dayjs(input.dateTime)}
+                  onChange={handleDateTime}
+                  format="YYYY-MM-DDThh:mm"
+                  sx={styleTextField}
+                  slotProps={{ textField: { size: "small" } }}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={confirmUpdateEvent}
+            >
+              Update Event
+            </Button>
+          </div>
+        </>
+      )}
     </>
   );
 };
