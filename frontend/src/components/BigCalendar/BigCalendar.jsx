@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import { useGetAllTodoItemsQuery } from "../../redux/todo/todoApi";
+import {  useGetAllAppointmentsQuery } from "../../redux/appointment/appointmentApi";
 import {
   formatDateToYYYYMMDD,
   formatDateToYYYYMMDDTHHMM,
@@ -13,13 +14,11 @@ import { compareIst } from "../../utils/compareIst";
 import { styled } from "@mui/material";
 import DarkThemeContext from "../../Context/DarkTheme/DarkThemeContext";
 import { toast } from "react-toastify";
-
+const timeArray = [];
 const localizer = momentLocalizer(moment);
-let c = 0,
-  d = 0;
 
 const BigCalendar = () => {
-  const [todos, setTodos] = useState([]);
+  const [events, setEvents] = useState([]);
   const calendarEvent = useContext(EventContext);
   const { selectedEvent, setSelectedEvent } = calendarEvent;
   const { dark, toggleTheme } = useContext(DarkThemeContext);
@@ -29,6 +28,7 @@ const BigCalendar = () => {
   const [checkReload, setCheckReload] = useState(0);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
   const getAllTodoItems = useGetAllTodoItemsQuery();
+  const getAllAppointments = useGetAllAppointmentsQuery();
 
   const todoSchema = {
     title: "",
@@ -38,11 +38,15 @@ const BigCalendar = () => {
     description: "",
   };
 
-  const events = [];
+  const todos = [];
+  const appointments = [];
   const [input, setInput] = useState({
     title: "",
     category: "",
     dateTime: "",
+    description:"",
+    startTime:"",
+    endTime:""
   });
 
   const calculatePopupPosition = (clientX, clientY) => {
@@ -73,9 +77,13 @@ const BigCalendar = () => {
       setIsOpen(!isOpen);
       return { start, end };
     });
-
+  
     const dateTime = formatDateToYYYYMMDDTHHMM(new Date(start));
+    const startTime = formatDateToYYYYMMDDTHHMM(new Date(start));
+    const endTime = formatDateToYYYYMMDDTHHMM(new Date(end));
     input.dateTime = dateTime;
+    input.startTime = startTime;
+    input.endTime = endTime;
   };
 
   const handleCalendarEvent = (event, e) => {
@@ -85,6 +93,7 @@ const BigCalendar = () => {
     setSelectedEvent(() => {
       return event;
     });
+    
 
     setIsEventOpen(!isEventOpen);
   };
@@ -98,8 +107,8 @@ const BigCalendar = () => {
         title: item.title,
         id: item._id,
         category: item.category,
-        type:item.type
-      };
+        type: item.type,
+      }; 
       const { date1IST, date2IST } = compareIst(
         new Date(event.start),
         new Date()
@@ -107,6 +116,7 @@ const BigCalendar = () => {
 
       const originalDate = new Date(date2IST);
       const newDate = new Date(originalDate.getTime() + 1 * 60 * 1000);
+      //timeArray.push(date1IST);
 
       if (date1IST >= date2IST && date1IST <= newDate) {
         toast.success("alarm for reminder");
@@ -121,13 +131,67 @@ const BigCalendar = () => {
       }
       return event;
     });
-
-    events.push(eventArray);
-    setTodos(events[0]);
+    
+    todos.push(eventArray);
   };
+  const getAppointmentEvents = async () => {
+    const response = await getAllAppointments.refetch();
+   
+    const eventArray = response?.data?.data?.map((item) => {
+      const event = {
+        start: moment(new Date(item?.startTime)).toDate(),
+        end: moment(new Date(item?.endTime)).toDate(),
+        title: item.title,
+        id: item._id,
+      }; 
+      const { date1IST, date2IST } = compareIst(
+        new Date(event.start),
+        new Date()
+      );
+
+      const originalDate = new Date(date2IST);
+      const newDate = new Date(new Date(
+        event.end.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+      ));
+     // timeArray.push(date1IST);
+
+      if (date1IST <= date2IST && date2IST < newDate) {
+        toast.success("alarm for reminder");
+        event.customProp = "important";
+        setTimeout(() => {
+          window.location.reload();
+        }, 300000);
+      } else if (date2IST >= newDate) {
+        event.customProp = "complete";
+      } else {
+        event.customProp = "normal";
+      }
+      return event;
+    });
+    appointments.push(eventArray);
+    setEvents(()=>{
+      return todos[0].concat(appointments[0])
+    });
+  }; 
+
+
+  // (function () {
+  //   const now = new Date();
+  //   const currentTimestamp = now.getTime();
+  //   for (let i = 0; i < timeArray.length; i++) {
+  //     const targetTimestamp = timeArray[i].getTime();
+  //     const delay = targetTimestamp - currentTimestamp;
+  //     if(delay > 0){
+  //     setTimeout(() => {
+  //       window.location.reload();
+  //     }, delay);
+  //   }
+  //   }
+  // })();
 
   useEffect(() => {
     getTodoEvents();
+    getAppointmentEvents();
   }, []);
 
   const eventStyleGetter = (event, start, end, isSelected) => {
@@ -191,7 +255,7 @@ const BigCalendar = () => {
           {dark ? (
             <StyledCalendar
               localizer={localizer}
-              events={todos}
+              events={events}
               startAccessor="start"
               endAccessor="end"
               onSelectSlot={handleSlot}
@@ -203,7 +267,7 @@ const BigCalendar = () => {
           ) : (
             <Calendar
               localizer={localizer}
-              events={todos}
+              events={events}
               startAccessor="start"
               endAccessor="end"
               onSelectSlot={handleSlot}

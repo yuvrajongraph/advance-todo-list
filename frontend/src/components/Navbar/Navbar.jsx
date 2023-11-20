@@ -23,6 +23,8 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const { dark, toggleTheme } = useContext(DarkThemeContext);
+  const dynamicClass = !dark ? 'bg-blue-500':'bg-[#282828]'
+  const dynamicClassTwo = !dark ? 'bg-blue-800':'bg-[black]'
   const [resetPasswordMail, { data, isError, isSuccess }] =
     useResetPasswordMailMutation();
   const [logoutUser] = useLogoutUserMutation();
@@ -71,7 +73,7 @@ const Navbar = () => {
 
   return (
     <div
-      className="absolute bg-blue-500 p-4 flex items-center justify-between w-[1530px] ml-[-158px] top-[1px] "
+      className={`absolute  p-4 flex items-center justify-between w-[1530px] ml-[-158px] top-[1px] ${dynamicClass}`}
     >
       <div className="text-white text-2xl font-semibold m-[auto]">
         Advance Todo App
@@ -79,18 +81,18 @@ const Navbar = () => {
       <button
         type="button"
         onClick={toggleTheme}
-        className="bg-blue-500 w-10 h-10 rounded-s flex items-center justify-center text-white font-semibold text-xl mr-[10px]"
+        className={` w-10 h-10 rounded-s flex items-center justify-center text-white font-semibold text-xl mr-[10px] ${dynamicClass}`}
         aria-haspopup="listbox"
         aria-expanded="true"
       >
-        {!dark ? <DarkModeIcon fontSize="medium" className="text-black"/>:<LightModeIcon fontSize="medium" />}
+        {!dark ? <DarkModeIcon fontSize="medium" className="text-black"/>:<LightModeIcon fontSize="medium"  />}
       </button>
 
       <div className="relative inline-block text-left">
         <button
           type="button"
           onClick={toggleDropdown}
-          className="bg-blue-800 w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-xl"
+          className={`${dynamicClassTwo} w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-xl`}
           aria-haspopup="listbox"
           aria-expanded="true"
         >

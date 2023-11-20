@@ -21,9 +21,16 @@ const EventCard = ({
   const istDateTimeDisplay = new Date(selectedEvent.start)
     .toDateString()
     .split(" ");
+    const istStartTimeDisplay = new Date(selectedEvent.start)
+    .toDateString()
+    .split(" ");
+    const istEndTimeDisplay = new Date(selectedEvent.end)
+    .toDateString()
+    .split(" ");
   const [deletePopUp, setDeletePopUp] = useState(false);
   const [cutThrough, setCutThrough] = useState(false);
   const dynamicClass = cutThrough ? 'line-through':''
+  const eventTypeClass = selectedEvent.category ? '':'m-[4px] ml-[52px]'
   const closePopUp = () => {
     setIsEventOpen(false);
   };
@@ -102,8 +109,8 @@ const EventCard = ({
               </div>
               <div className="mt-[-20px] mr-[85px]">
                 <h2
-                  className={`text-md ${dynamicClass}`}
-                >{`${istDateTimeDisplay[0]}, ${istDateTimeDisplay[1]} ${istDateTimeDisplay[2]}`}</h2>
+                  className={`text-md ${dynamicClass} ${eventTypeClass}`}
+                >{!selectedEvent.category ? `${istStartTimeDisplay[0]}, ${istStartTimeDisplay[1]} ${istStartTimeDisplay[2]} - ${istEndTimeDisplay[0]}, ${istEndTimeDisplay[1]} ${istEndTimeDisplay[2]}`:`${istDateTimeDisplay[0]}, ${istDateTimeDisplay[1]} ${istDateTimeDisplay[2]}`}</h2>
               </div>
             </div>
           </div>

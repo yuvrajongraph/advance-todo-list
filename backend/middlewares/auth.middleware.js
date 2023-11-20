@@ -30,7 +30,7 @@ const verifyToken =asyncHandler(async (req, res, next) => {
       return commonErrorHandler(req, res, null, 401, "User not found");
     }
     req.user = user;
-
+    
     next();
 });
 

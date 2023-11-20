@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useCreateTodoItemMutation } from "../../redux/todo/todoApi";
+import { useCreateAppointmentMutation } from "../../redux/appointment/appointmentApi";
 import { toast } from "react-toastify";
 import ModalNavbar from "./ModalNavbar";
 
@@ -27,11 +28,12 @@ const CustomModal = ({
   const options = ["normal", "food", "other"];
   const [activeLink, setActiveLink] = useState("todo");
 
-  const { title, category, dateTime, description } = input;
+  const { title, category, dateTime, description,startTime,endTime } = input;
   // const [selectedEvent, setSelectedEvent] = useState(null);
 
 
   const [createTodoItem] = useCreateTodoItemMutation();
+  const [createAppointment]= useCreateAppointmentMutation();
 
   const handleOptionChange = (e) => {
     setSelectedOption(e.target.value);
@@ -48,20 +50,38 @@ const CustomModal = ({
   };
 
   const handleDateTime = (e) => {
+  
     setInput(() => {
       return { ...input, dateTime: e.$d };
+    });
+  };
+  const handleStartTime = (e) => {
+    
+    setInput(() => {
+      return { ...input, startTime: e.$d};
+    });
+  };
+  const handleEndTime = (e) => {
+    
+    setInput(() => {
+      return { ...input, endTime: e.$d};
     });
   };
 
   const saveTodo = async (e) => {
     e.preventDefault();
-    const response = await createTodoItem({
+    const response = activeLink === 'todo' ? await createTodoItem({
       title,
       type: activeLink,
       status: "open",
       category: selectedOption,
       dateTime: dateTime,
-    });
+    }): await createAppointment({
+      title,
+      status: "open",
+      startTime: startTime,
+      endTime: endTime
+    }) ;
 
     if (response.data) {
       toast.success(response?.data?.message);
@@ -73,6 +93,8 @@ const CustomModal = ({
       category: "",
       dateTime: "",
       description: "",
+      startTime:"",
+      endTime:""
     });
     setTimeout(() => {
       window.location.reload();
@@ -178,8 +200,8 @@ const CustomModal = ({
                         <DemoContainer components={["DateTimePicker"]}>
                           <DateTimePicker
                             label="Start Time"
-                            value={dayjs(dateTime)}
-                            onChange={handleDateTime}
+                            value={dayjs(startTime)}
+                            onChange={handleStartTime}
                             format="YYYY-MM-DDThh:mm"
                             slotProps={{ textField: { size: "small" } }}
                           />
@@ -191,8 +213,8 @@ const CustomModal = ({
                         <DemoContainer components={["DateTimePicker"]}>
                           <DateTimePicker
                             label="End Time"
-                            value={dayjs(dateTime)}
-                            onChange={handleDateTime}
+                            value={dayjs(endTime)}
+                            onChange={handleEndTime}
                             format="YYYY-MM-DDThh:mm"
                             slotProps={{ textField: { size: "small" } }}
                           />

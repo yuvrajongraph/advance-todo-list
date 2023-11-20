@@ -7,6 +7,7 @@ import {
 } from "../../utils/dateConversion";
 import EventContext from "../../Context/Event/EventContext";
 import { useUpdateTodoItemMutation } from "../../redux/todo/todoApi";
+import { useUpdateAppointmentMutation } from "../../redux/appointment/appointmentApi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
@@ -23,12 +24,15 @@ const UpdateEventScreen = () => {
   const { type } = useParams();
   const { selectedEvent, setSelectedEvent } = calendarEvent;
   const [updateTodoItem] = useUpdateTodoItemMutation();
+  const [updateAppointment] = useUpdateAppointmentMutation();
   const { dark, toggleTheme } = useContext(DarkThemeContext);
   const navigate = useNavigate();
   const [input, setInput] = useState({
     title: selectedEvent.title,
     category: selectedEvent.category,
     dateTime: formatDateToYYYYMMDDTHHMM(new Date(selectedEvent.start)),
+    startTime: formatDateToYYYYMMDDTHHMM(new Date(selectedEvent.start)),
+    endTime: formatDateToYYYYMMDDTHHMM(new Date(selectedEvent.end)),
   });
   const styleTextField = dark
     ? {
@@ -63,17 +67,34 @@ const UpdateEventScreen = () => {
       return { ...input, dateTime: e.$d };
     });
   };
+  const handleStartTime = (e) => {
+    setInput(() => {
+      return { ...input, startTime: e.$d };
+    });
+  };
+  const handleEndTime = (e) => {
+    setInput(() => {
+      return { ...input, endTime: e.$d };
+    });
+  };
 
   const confirmUpdateEvent = async (e) => {
-    const response = await updateTodoItem({
-      id: selectedEvent.id,
-      title,
-      type:selectedEvent.type,
-      status: "open",
-      category,
-      dateTime: input.dateTime,
-    });
-    console.log(response);
+    const response = selectedEvent.endTime
+      ? await updateTodoItem({
+          id: selectedEvent.id,
+          title,
+          type: selectedEvent.type,
+          status: "open",
+          category,
+          dateTime: input.dateTime,
+        })
+      : await updateAppointment({
+          id: selectedEvent.id,
+          title,
+          status: "open",
+          startTime: input.startTime,
+          endTime: input.endTime,
+        });
     if (response.data) {
       toast.success(response?.data?.message);
     } else {
@@ -82,7 +103,7 @@ const UpdateEventScreen = () => {
     setTimeout(() => {
       navigate("/");
       window.location.reload();
-    }, 1000);
+    }, 2000);
   };
   return (
     <>
@@ -161,8 +182,8 @@ const UpdateEventScreen = () => {
               <DemoContainer components={["DateTimePicker"]}>
                 <DateTimePicker
                   label="Start Time"
-                  value={dayjs(input.dateTime)}
-                  onChange={handleDateTime}
+                  value={dayjs(input.startTime)}
+                  onChange={handleStartTime}
                   format="YYYY-MM-DDThh:mm"
                   sx={styleTextField}
                   slotProps={{ textField: { size: "small" } }}
@@ -174,8 +195,8 @@ const UpdateEventScreen = () => {
               <DemoContainer components={["DateTimePicker"]}>
                 <DateTimePicker
                   label="End Time"
-                  value={dayjs(input.dateTime)}
-                  onChange={handleDateTime}
+                  value={dayjs(input.endTime)}
+                  onChange={handleEndTime}
                   format="YYYY-MM-DDThh:mm"
                   sx={styleTextField}
                   slotProps={{ textField: { size: "small" } }}

@@ -3,6 +3,7 @@ import authSlice from "./auth/authSlice";
 import todoSlice from "./todo/todoSlice";
 import { authApi } from "./auth/authApi";
 import { todoApi } from "./todo/todoApi";
+import { appointmentApi } from "./appointment/appointmentApi";
 import {
   persistStore,
   persistReducer,
@@ -27,6 +28,7 @@ const store = configureStore({
     [authApi.reducerPath]: authApi.reducer,
     todos: todoSlice,
     [todoApi.reducerPath]: todoApi.reducer,
+    [appointmentApi.reducerPath]: appointmentApi.reducer,
   })),
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -34,7 +36,7 @@ const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
       thunk: true,
-    }).concat(authApi.middleware, todoApi.middleware),
+    }).concat(authApi.middleware, todoApi.middleware,appointmentApi.middleware),
   devTools: true,
 });
 

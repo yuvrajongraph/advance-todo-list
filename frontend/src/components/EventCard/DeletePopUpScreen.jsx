@@ -2,6 +2,7 @@ import React from "react";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { useDeleteTodoItemMutation } from "../../redux/todo/todoApi";
+import { useDeleteAppointmentMutation } from "../../redux/appointment/appointmentApi";
 import { toast } from "react-toastify";
 
 
@@ -14,13 +15,14 @@ const DeletePopUpScreen = ({
   setSelectedEvent,
 }) => {
   const [deleteTodoItem] = useDeleteTodoItemMutation();
+  const [deleteAppointment] = useDeleteAppointmentMutation();
   const handleClose = () => {
     setDeletePopUp(false);
   };
 
   const confirmDeleteEvent = async (e) => {
     setDeletePopUp(false);
-    const response = await deleteTodoItem({ id: selectedEvent?.id });
+    const response = selectedEvent.dateTime? await deleteTodoItem({ id: selectedEvent?.id }): await deleteAppointment({id:selectedEvent?.id});
     if (response.data) {
       toast.success(response?.data?.message);
     } else {
