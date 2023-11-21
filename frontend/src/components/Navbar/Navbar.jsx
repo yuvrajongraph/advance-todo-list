@@ -24,7 +24,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { dark, toggleTheme } = useContext(DarkThemeContext);
   const dynamicClass = !dark ? 'bg-blue-500':'bg-[#282828]'
-  const dynamicClassTwo = !dark ? 'bg-blue-800':'bg-[black]'
+  const dynamicClassTwo = !dark ? 'bg-blue-800':'bg-[black] text-[red]'
   const [resetPasswordMail, { data, isError, isSuccess }] =
     useResetPasswordMailMutation();
   const [logoutUser] = useLogoutUserMutation();
