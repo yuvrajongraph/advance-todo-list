@@ -10,6 +10,13 @@ const createTodoItem = asyncHandler(async (req, res) => {
     const body = req.body;
     
     req.body.userId = req.user._id;
+    body.dateTime = new Date(body.dateTime);
+
+    const currentDateTime = new Date();
+    if(body.dateTime < currentDateTime){
+      return commonErrorHandler(req, res, null, 404, "Please, choose date above or equal to current date ");
+    }
+
     // create a schema todo item
     const todo = new Todo(body);
 
@@ -75,6 +82,12 @@ const updateTodoItem = asyncHandler(async (req, res) => {
 
     const params = req.params;
     const body = req.body;
+    body.dateTime = new Date(body.dateTime);
+    
+    const currentDateTime = new Date();
+    if(body.dateTime < currentDateTime){
+      return commonErrorHandler(req, res, null, 404, "Please, choose date above or equal to current date ");
+    }
 
     // find and update todo item in DB
     const data = await Todo.findOneAndUpdate(

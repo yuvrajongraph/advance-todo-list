@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "set NODE_ENV=development && nodemon index.js",
+    "start": "set NODE_ENV=development &&  nodemon index.js ",
     "test": "set NODE_ENV=test && nodemon index.js"
   },
   "keywords": [],
@@ -16,12 +16,21 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-jwt": "^8.4.1",
+    "express-session": "^1.17.3",
+    "googleapis": "^128.0.0",
     "helmet": "^7.0.0",
     "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.3",
-    "nodemon": "^3.0.1"
+    "node-notifier": "^10.0.1",
+    "node-schedule": "^2.1.1",
+    "nodemailer": "^6.9.6",
+    "nodemon": "^3.0.1",
+    "passport": "^0.6.0",
+    "passport-google-oauth2": "^0.2.0",
+    "unique-string-generator": "^1.1.1"
   }
 }

@@ -6,18 +6,17 @@ const { asyncHandler } = require("./asyncHandler.middleware");
 
 const verifyToken =asyncHandler(async (req, res, next) => {
   
+    if(req.user){
+      next()
+    }
     // read authorization key from header
     const header = req.headers["authorization"];
 
     // retrieve the toke
     const token = header ? header.split(" ")[1] : null;
 
+  
     if (!token) {
-      return commonErrorHandler(req, res, null, 401, "Access Denied");
-    }
-
-    // token does not match with the token present in cookies using cookie-parser
-    if (token !== req.cookies.token) {
       return commonErrorHandler(req, res, null, 401, "Access Denied");
     }
 
@@ -31,8 +30,10 @@ const verifyToken =asyncHandler(async (req, res, next) => {
       return commonErrorHandler(req, res, null, 401, "User not found");
     }
     req.user = user;
-
+    
     next();
 });
+
+
 
 module.exports = { verifyToken };

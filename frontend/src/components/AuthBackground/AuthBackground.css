@@ -1,0 +1,5 @@
+.background-image{
+    background-image: url('../../../src/assets/bg9.jpg') ;
+    background-size: 100vw auto;
+    opacity: 0.9;
+}
