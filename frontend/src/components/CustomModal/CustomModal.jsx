@@ -72,7 +72,6 @@ const CustomModal = ({
     e.preventDefault();
     const response = activeLink === 'todo' ? await createTodoItem({
       title,
-      type: activeLink,
       status: "open",
       category: selectedOption,
       dateTime: dateTime,

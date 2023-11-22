@@ -37,7 +37,7 @@ app.use(cookieParser());
 // Enable cors support to accept cross origin requests
 app.use(
   cors({
-    origin: config.FRONTEND_URL,
+    origin: '*',
     credentials: true,
     optionsSuccessStatus: 200,
   })

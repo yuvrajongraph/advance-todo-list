@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import {
   formatDateToYYYYMMDDTHHMM,
@@ -23,9 +24,12 @@ const UpdateEventScreen = () => {
   const calendarEvent = useContext(EventContext);
   const { type } = useParams();
   const { selectedEvent, setSelectedEvent } = calendarEvent;
+  const options = ["normal", "food", "other"];
   const [updateTodoItem] = useUpdateTodoItemMutation();
   const [updateAppointment] = useUpdateAppointmentMutation();
   const { dark, toggleTheme } = useContext(DarkThemeContext);
+  const [selectedOption, setSelectedOption] = useState(selectedEvent.category);
+
   const navigate = useNavigate();
   const [input, setInput] = useState({
     title: selectedEvent.title,
@@ -78,14 +82,17 @@ const UpdateEventScreen = () => {
     });
   };
 
+  const handleChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
   const confirmUpdateEvent = async (e) => {
-    const response = selectedEvent.endTime
+    const response = selectedEvent.category
       ? await updateTodoItem({
           id: selectedEvent.id,
           title,
-          type: selectedEvent.type,
           status: "open",
-          category,
+          category: selectedOption,
           dateTime: input.dateTime,
         })
       : await updateAppointment({
@@ -103,7 +110,7 @@ const UpdateEventScreen = () => {
     setTimeout(() => {
       navigate("/");
       window.location.reload();
-    }, 2000);
+    }, 1000);
   };
   return (
     <>
@@ -127,6 +134,7 @@ const UpdateEventScreen = () => {
           />
 
           <TextField
+            select
             label="Category"
             variant="outlined"
             fullWidth
@@ -134,9 +142,14 @@ const UpdateEventScreen = () => {
             id="category"
             size="small"
             sx={styleTextField}
-            value={category}
-            onChange={handleInputEvent}
-          />
+            value={selectedOption}
+            onChange={handleChange}
+            className="text-left"
+          >
+            <MenuItem value="normal">{options[0]}</MenuItem>
+            <MenuItem value="food">{options[1]}</MenuItem>
+            <MenuItem value="other">{options[2]}</MenuItem>
+          </TextField>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={["DateTimePicker"]}>

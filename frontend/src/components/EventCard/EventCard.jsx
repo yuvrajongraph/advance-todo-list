@@ -44,7 +44,8 @@ const EventCard = ({
   const updateEvent = (e) => {
     e.preventDefault();
     setIsEventOpen(false);
-    navigate(`/update/${selectedEvent.type}`);
+    const type = selectedEvent.category ? 'todo':'appointment';
+    navigate(`/update/${type}`);
   };
 
   useEffect(() => {

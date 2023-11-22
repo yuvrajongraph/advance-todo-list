@@ -17,16 +17,30 @@ import ResetPassword from "./components/ResetPassword/ResetPassword";
 import AppLayout from "./components/Applayout/Applayout";
 import BigCalendar from "./components/BigCalendar/BigCalendar";
 import UpdateEventScreen from "./components/EventCard/UpdateEventScreen";
-
-
-
+import io from "socket.io-client";
 
 function App() {
   const [authenticated, cookie] = useAuth();
-  
+
   useEffect(() => {
+    const socket = io(`${import.meta.env.VITE_BACKEND_URL_TWO}`,{
+      withCredentials: true 
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+
+    socket.on("reloadPage", () => {
+      window.location.reload();
+    });
+
     window.process = {
       ...window.process,
+    };
+
+    return () => {
+      socket.disconnect();
     };
   }, []);
   return (
@@ -34,7 +48,7 @@ function App() {
       <ToastContainer />
       <Routes>
         {authenticated ? (
-          <Route path="/" element={<AppLayout />} >
+          <Route path="/" element={<AppLayout />}>
             <Route path="/" element={<BigCalendar />} />
             <Route path="/update/:type" element={<UpdateEventScreen />} />
           </Route>

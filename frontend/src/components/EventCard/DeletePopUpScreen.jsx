@@ -22,7 +22,7 @@ const DeletePopUpScreen = ({
 
   const confirmDeleteEvent = async (e) => {
     setDeletePopUp(false);
-    const response = selectedEvent.dateTime? await deleteTodoItem({ id: selectedEvent?.id }): await deleteAppointment({id:selectedEvent?.id});
+    const response = selectedEvent.category? await deleteTodoItem({ id: selectedEvent?.id }): await deleteAppointment({id:selectedEvent?.id});
     if (response.data) {
       toast.success(response?.data?.message);
     } else {

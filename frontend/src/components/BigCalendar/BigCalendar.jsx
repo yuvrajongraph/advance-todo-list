@@ -107,7 +107,6 @@ const BigCalendar = () => {
         title: item.title,
         id: item._id,
         category: item.category,
-        type: item.type,
       }; 
       const { date1IST, date2IST } = compareIst(
         new Date(event.start),

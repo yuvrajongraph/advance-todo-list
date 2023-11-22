@@ -21,21 +21,20 @@ export const todoApi = createApi({
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     createTodoItem: builder.mutation({
-      query: ({ title, status, category, dateTime,type }) => ({
+      query: ({ title, status, category, dateTime }) => ({
         url: `/todo-list`,
         method: "POST",
         body: {
           title,
           status,
           category,
-          dateTime,
-          type
+          dateTime
         },
       }),
       invalidatesTags: ["todos"],
     }),
     updateTodoItem: builder.mutation({
-      query: ({ id, title, status, category, dateTime,type }) => ({
+      query: ({ id, title, status, category, dateTime }) => ({
         url: `/todo-list/${id}`,
         method: "PATCH",
         body: {
@@ -43,7 +42,6 @@ export const todoApi = createApi({
           status,
           category,
           dateTime,
-          type
         },
       }),
       invalidatesTags: ["todos"],
