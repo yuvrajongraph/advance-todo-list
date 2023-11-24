@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import { useGetAllTodoItemsQuery } from "../../redux/todo/todoApi";
+import { useGetAllTodoItemsMutation } from "../../redux/todo/todoApi";
 import {  useGetAllAppointmentsQuery } from "../../redux/appointment/appointmentApi";
 import {
   formatDateToYYYYMMDD,
@@ -27,7 +27,7 @@ const BigCalendar = () => {
   const [isEventOpen, setIsEventOpen] = useState(false);
   const [checkReload, setCheckReload] = useState(0);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-  const getAllTodoItems = useGetAllTodoItemsQuery();
+  const [getAllTodoItems] =useGetAllTodoItemsMutation();
   const getAllAppointments = useGetAllAppointmentsQuery();
 
   const todoSchema = {
@@ -99,8 +99,9 @@ const BigCalendar = () => {
   };
 
   const getTodoEvents = async () => {
-    const response = await getAllTodoItems.refetch();
-    const eventArray = response?.data?.data?.map((item) => {
+    const response = await getAllTodoItems();
+    
+    const eventArray =  response?.data?.data?.map((item) => {
       const event = {
         start: moment(new Date(item?.dateTime)).toDate(),
         end: moment(new Date(item?.dateTime)).toDate(),
@@ -130,12 +131,13 @@ const BigCalendar = () => {
       }
       return event;
     });
+  
     
     todos.push(eventArray);
   };
+  
   const getAppointmentEvents = async () => {
     const response = await getAllAppointments.refetch();
-   
     const eventArray = response?.data?.data?.map((item) => {
       const event = {
         start: moment(new Date(item?.startTime)).toDate(),
@@ -159,7 +161,7 @@ const BigCalendar = () => {
         event.customProp = "important";
         setTimeout(() => {
           window.location.reload();
-        }, 300000);
+        }, 60000);
       } else if (date2IST >= newDate) {
         event.customProp = "complete";
       } else {
@@ -168,6 +170,7 @@ const BigCalendar = () => {
       return event;
     });
     appointments.push(eventArray);
+    //console.log(appointments[0],"====",todos[0]);
     setEvents(()=>{
       return todos[0].concat(appointments[0])
     });

@@ -5,6 +5,7 @@ import {
   useResetPasswordMailMutation,
   useGoogleAuthMutation,
   useLogoutUserMutation,
+  useGoogleContactQuery
 } from "../../redux/auth/authApi";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
@@ -15,6 +16,7 @@ import { useContext } from "react";
 import DarkThemeContext from "../../Context/DarkTheme/DarkThemeContext";
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
+import ContactsIcon from '@mui/icons-material/Contacts';
 
 const Navbar = () => {
   const [authenticated, cookie] = useAuth();
@@ -24,13 +26,20 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { dark, toggleTheme } = useContext(DarkThemeContext);
   const dynamicClass = !dark ? 'bg-blue-500':'bg-[#282828]'
-  const dynamicClassTwo = !dark ? 'bg-blue-800':'bg-[#E6E6E6] text-red-900'
+  const dynamicClassTwo = !dark ? 'bg-blue-800':'bg-[#E6E6E6]'
   const [resetPasswordMail, { data, isError, isSuccess }] =
     useResetPasswordMailMutation();
   const [logoutUser] = useLogoutUserMutation();
+  //const googleContact = useGoogleContactQuery();
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+
+  const handleContact = async()=>{
+    //const response = await googleContact.refetch();
+    //console.log(response);
+   window.open(`${import.meta.env.VITE_BACKEND_URL}/auth/google/contact`, "_self");
+  }
   const handleMailFunctionality = async (e) => {
     e.preventDefault();
     toggleDropdown();
@@ -80,6 +89,15 @@ const Navbar = () => {
       </div>
       <button
         type="button"
+        onClick={handleContact}
+        className={` w-10 h-10 rounded-s flex items-center justify-center text-white font-semibold text-xl mr-[10px] ${dynamicClass}`}
+        aria-haspopup="listbox"
+        aria-expanded="true"
+      >
+      {dark?<ContactsIcon fontSize="medium" />:<ContactsIcon fontSize="medium" className="text-black"/>}
+      </button>
+      <button
+        type="button"
         onClick={toggleTheme}
         className={` w-10 h-10 rounded-s flex items-center justify-center text-white font-semibold text-xl mr-[10px] ${dynamicClass}`}
         aria-haspopup="listbox"
@@ -93,6 +111,7 @@ const Navbar = () => {
           type="button"
           onClick={toggleDropdown}
           className={`${dynamicClassTwo} w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-xl`}
+          style={{color: dark?"#FF0000":""}}
           aria-haspopup="listbox"
           aria-expanded="true"
         >

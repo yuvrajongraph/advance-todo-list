@@ -66,11 +66,17 @@ export const authApi = createApi({
     }),
     googleAuth: builder.mutation({
       query: () => ({
-        url: "/auth/google/callback",
+        url: "/auth/google",
+        method: "GET",
+      }),
+    }),
+    googleContact: builder.query({
+      query: () => ({
+        url: "/auth/google/contact",
         method: "GET",
       }),
     }),
   }),
 });
 
-export const { useLoginUserMutation, useRegisterUserMutation, useRegisterUserVerificationMutation, useResetPasswordMutation, useResetPasswordMailMutation, useGoogleAuthMutation, useLogoutUserMutation } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useRegisterUserVerificationMutation, useResetPasswordMutation, useResetPasswordMailMutation, useGoogleAuthMutation, useLogoutUserMutation, useGoogleContactQuery } = authApi;

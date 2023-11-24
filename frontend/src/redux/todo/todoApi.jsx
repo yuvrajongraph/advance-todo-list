@@ -53,12 +53,12 @@ export const todoApi = createApi({
       }),
       providesTags: ["todos"],
     }),
-    getAllTodoItems: builder.query({
+    getAllTodoItems: builder.mutation({
       query: () => ({
         url: `/todo-list`,
         method: "GET",
       }),
-      providesTags: ["todos"],
+      
     }),
     deleteTodoItem: builder.mutation({
       query: ({ id }) => ({
@@ -74,6 +74,6 @@ export const {
   useCreateTodoItemMutation,
   useUpdateTodoItemMutation,
   useDeleteTodoItemMutation,
-  useGetAllTodoItemsQuery,
+  useGetAllTodoItemsMutation,
   useGetSingleTodoItemQuery,
 } = todoApi;

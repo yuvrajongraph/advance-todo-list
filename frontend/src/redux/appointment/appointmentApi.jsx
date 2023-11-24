@@ -32,7 +32,7 @@ export const appointmentApi = createApi({
           
         },
       }),
-      invalidatesTags: ["todos"],
+      invalidatesTags: ["appointments"],
     }),
     updateAppointment: builder.mutation({
       query: ({ id, title, status, startTime, endTime }) => ({
@@ -45,28 +45,28 @@ export const appointmentApi = createApi({
           endTime
         },
       }),
-      invalidatesTags: ["todos"],
+      invalidatesTags: ["appointments"],
     }),
     getSingleAppointment: builder.query({
       query: ({ id }) => ({
         url: `/appointment/${id}`,
         method: "GET",
       }),
-      providesTags: ["todos"],
+      providesTags: ["appointments"],
     }),
     getAllAppointments: builder.query({
       query: () => ({
         url: `/appointment`,
         method: "GET",
       }),
-      providesTags: ["todos"],
+      providesTags: ["appointments"],
     }),
     deleteAppointment: builder.mutation({
       query: ({ id }) => ({
         url: `/appointment/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["todos"],
+      invalidatesTags: ["appointments"],
     }),
   }),
 });
