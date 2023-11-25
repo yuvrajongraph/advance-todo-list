@@ -52,6 +52,10 @@ app.use(compression());
 // Disble x-powered-by header to hide server side technology
 app.disable("x-powered-by");
 
+app.use(express.urlencoded({extended:true}))
+
+// app.use(express.static('./uploads'));
+
 //  Server connect with MongoDB using mongoose
 mongoose.connect(config.DB_URL, {
   useNewUrlParser: true,

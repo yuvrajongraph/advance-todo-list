@@ -60,6 +60,7 @@ const Navbar = () => {
       setTimeout(() => {
         dispatch(logoutSuccess());
         cookies.remove("userData");
+        navigate("/")
         window.location.reload();
       }, 1000);
     } else {
@@ -127,6 +128,27 @@ const Navbar = () => {
             >
               {/* Dropdown items */}
               <div className="py-1" role="none">
+              <button
+                  className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  role="menuitem"
+                  onClick={()=> {
+                    navigate('/')
+                    window.location.reload();
+                  }}
+                >
+                  Home
+                </button>
+                
+              <button
+                  className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  role="menuitem"
+                  onClick={()=> {
+                    navigate('/profile')
+                    //window.location.reload();
+                  }}
+                >
+                  Profile
+                </button>
                 <button
                   className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   role="menuitem"

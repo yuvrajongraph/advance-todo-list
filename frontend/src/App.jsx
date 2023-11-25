@@ -17,12 +17,12 @@ import ResetPassword from "./components/ResetPassword/ResetPassword";
 import AppLayout from "./components/Applayout/Applayout";
 import BigCalendar from "./components/BigCalendar/BigCalendar";
 import UpdateEventScreen from "./components/EventCard/UpdateEventScreen";
+import Profile from "./components/Profile/Profile";
 import io from "socket.io-client";
 
 function App() {
   const [authenticated, cookie] = useAuth();
-
-  useEffect(() => {
+    useEffect(() => {
     const socket = io(`${import.meta.env.VITE_BACKEND_URL_TWO}`,{
       withCredentials: true 
     });
@@ -51,6 +51,7 @@ function App() {
           <Route path="/" element={<AppLayout />}>
             <Route path="/" element={<BigCalendar />} />
             <Route path="/update/:type" element={<UpdateEventScreen />} />
+            <Route path="/profile" element={<Profile userDetail = {cookie.userData.details}/>} />
           </Route>
         ) : (
           <Route path="/" element={<Navigate to={"/auth/login"} />} />
