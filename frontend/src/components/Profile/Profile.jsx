@@ -1,77 +1,62 @@
-import defaultImage from "../../assets/bg1.jpg";
+import defaultImage from "../../assets/noprofilepicture.webp";
 import { Button } from "@mui/material";
 import { useState, useEffect } from "react";
-import { useUploadImageMutation, useGetSingleUserMutation } from "../../redux/user/userApi";
+import {
+  useUploadImageMutation,
+  useGetSingleUserMutation,
+} from "../../redux/user/userApi";
+import ReactCrop from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
+import UploadModal from "./UploadModal";
 
 const Profile = ({ userDetail }) => {
   const [file, setFile] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const [user, setUser] = useState(userDetail);
-  const [profileImage, setProfileImage] = useState('');
+  const [crop, setCrop] = useState({ aspect: 1 / 1 });
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [profileImage, setProfileImage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [uploadImage] = useUploadImageMutation();
   const [getSingleUser] = useGetSingleUserMutation();
 
-  const handleImageData = async (e) => {
+  const handleShowModal = async (e) => {
     e.preventDefault();
-    setFile(e.target.files[0]);
+    setShowModal(true);
   };
-  const handleImageUpload = async (e) => {
-    e.preventDefault();
-    if (file) {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append("myImage", file);
-      try {
-        const response = await uploadImage(formData);
-        if (response.data) {
-          setProfileImage(response.data.data.imageLink);
-          setLoading(false);
-          //window.location.reload();
-        }
-      } catch (error) {
-        console.error("Error uploading file:", error);
-      }
-    }
+  const handleOnClose = () => {
+    setShowModal(false);
   };
 
-  const getUser = async()=>{
+  const getUser = async () => {
     const response = await getSingleUser();
 
-    if(response.data){
-        setProfileImage(response.data.data.url)
+    if (response.data) {
+      setProfileImage(response.data.data.url);
     }
-  }
-  useEffect(()=>{
+  };
+  useEffect(() => {
     getUser();
-  },[])
-
-
+  }, []);
 
   return (
     <>
-     <div className=" mt-[60px]">
-      <h1>{user?.name}</h1>
-      <input
-        type="file"
-        onChange={handleImageData}
-        name="myImage"
-        accept="image/*"
-      />
-      <Button
-        variant="contained"
-        color="primary"
-        className="m-3"
-        onClick={handleImageUpload}
-      >
-        {loading ? "Uploading...." : "Upload Image"}
-      </Button>
-      
-      <img
-        src={profileImage === "" ? defaultImage : profileImage}
-        alt=""
-        className="h-[300px] w-[300px] mt-[20px] ml-[450px]"
-      />
+      <div className=" mt-[60px]">
+        <h1>{user?.name}</h1>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ marginTop: "20px" }}
+          onClick={handleShowModal}
+        >
+          Upload Image
+        </Button>
+        <img
+          src={profileImage === "" ? defaultImage : profileImage}
+          alt=""
+          className="h-[300px] w-[300px] mt-[20px] ml-[450px]"
+        />
       </div>
+      <UploadModal visible={showModal} onClose={handleOnClose} setProfileImage={setProfileImage} />
     </>
   );
 };

@@ -1,4 +1,5 @@
 const cloudinary = require('cloudinary').v2;
+const config = require('../config/config')
 
 const options = {
     overwrite :true,
@@ -7,9 +8,9 @@ const options = {
 }
 
 cloudinary.config({ 
-  cloud_name: 'dmut0goar', 
-  api_key: '269945374473742', 
-  api_secret: 'DV13bpyeUs5jEU22hb2I8o2oM_E' 
+  cloud_name: config.CLOUD_NAME, 
+  api_key: config.API_KEY, 
+  api_secret: config.API_SECRET 
 });
 
 const uploadImageCloudinary = async(path)=>{
