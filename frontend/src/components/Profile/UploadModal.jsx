@@ -1,32 +1,36 @@
-import defaultImage from "../../assets/noprofilepicture.webp";
 import { Button } from "@mui/material";
 import { useState, useEffect } from "react";
-import {
-  useUploadImageMutation,
-} from "../../redux/user/userApi";
+import axios from 'axios';
+import useAuth from "../../hooks/useAuth";
+//import { useUploadImageMutation } from "../../redux/user/userApi";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { LinearProgress } from "@mui/material";
+import "./UploadModal.css";
+
+let originalFile = null;
 
 const UploadModal = ({ visible, onClose, setProfileImage }) => {
   if (!visible) return null;
-
+  const [authenticated, cookie] = useAuth();
   const [file, setFile] = useState(null);
   const [progress, setProgress] = useState(0);
   const [crop, setCrop] = useState({ aspect: 1 / 1 });
   const [croppedImage, setCroppedImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isCropImage, setIsCropImage] = useState(false);
 
-  const [uploadImage] = useUploadImageMutation();
-
+  //const [uploadImage] = useUploadImageMutation();
 
   const handleImageData = async (e) => {
     e.preventDefault();
+    originalFile = e.target.files[0];
     setFile(URL.createObjectURL(e.target.files[0]));
   };
 
   const handleCropComplete = (cropData) => {
     if (cropData.width && cropData.height) {
+      setIsCropImage(true);
       getCroppedImage(cropData);
     }
   };
@@ -61,26 +65,48 @@ const UploadModal = ({ visible, onClose, setProfileImage }) => {
   const handleImageUpload = async (e) => {
     e.preventDefault();
     if (file) {
-      setLoading(true);
       const formData = new FormData();
-      formData.append("myImage", croppedImage);
-      try {
-        const response = await uploadImage(formData);
+      const image = isCropImage? croppedImage : originalFile
+      formData.append("myImage", image);
+      const yourToken = cookie.userData.token
+      setLoading(true);
+      axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/upload-image`, formData, {
+        headers: {
+           'Authorization': `Bearer ${yourToken}`,
+        },
+        onUploadProgress: ({loaded,total}) => {
+          const progress = Math.floor((loaded / total) * 100);
+          setProgress(progress);
+        },
+      })
+      .then((response) => {
         if (response.data) {
           setProfileImage(response.data.data.imageLink);
           setLoading(false);
           setFile(null);
           window.location.reload();
         }
-      } catch (error) {
-        console.error("Error uploading file:", error);
-      }
+      })
+      .catch((error) => {
+        console.error('Upload Failed:', error);
+      });
+      // try {
+      //   const response = await uploadImage(formData);
+      //   if (response.data) {
+      //     setProfileImage(response.data.data.imageLink);
+      //     setLoading(false);
+      //     setFile(null);
+      //     window.location.reload();
+      //   }
+      // } catch (error) {
+      //   console.error("Error uploading file:", error);
+      // }
     }
   };
 
   return (
     <>
-      <div className="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm">
+      <div className="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-30">
         <div className=" mt-[60px]">
           <input
             type="file"
@@ -105,10 +131,19 @@ const UploadModal = ({ visible, onClose, setProfileImage }) => {
             Cancel
           </Button>
           {loading && (
-            <div className="w-[200px] m-[auto] mt-[10px]">
-              <LinearProgress />
+            <div className="progressbar">
+              <div
+                style={{
+                  height: "100%",
+                  width: `${progress}%`,
+                  backgroundColor: "#a66cff",
+                  transition: "width 0.5s",
+                }}
+              ></div>
+              <span className="progressPercent">{progress}%</span>
             </div>
           )}
+
           {file && (
             <div className="mt-[20px]">
               <ReactCrop

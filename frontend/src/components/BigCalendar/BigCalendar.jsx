@@ -14,7 +14,7 @@ import { compareIst } from "../../utils/compareIst";
 import { styled } from "@mui/material";
 import DarkThemeContext from "../../Context/DarkTheme/DarkThemeContext";
 import { toast } from "react-toastify";
-const timeArray = [];
+import ContactContext from "../../Context/Contact/ContactContext";
 const localizer = momentLocalizer(moment);
 
 const BigCalendar = () => {
@@ -29,7 +29,8 @@ const BigCalendar = () => {
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
   const [getAllTodoItems] =useGetAllTodoItemsMutation();
   const getAllAppointments = useGetAllAppointmentsQuery();
-
+  const {contactName, setContactName} = useContext(ContactContext);
+  const contactTitle = contactName !== ''? `${contactName}'s birthday`:'';
   const todoSchema = {
     title: "",
     status: "",
@@ -41,7 +42,7 @@ const BigCalendar = () => {
   const todos = [];
   const appointments = [];
   const [input, setInput] = useState({
-    title: "",
+    title: contactTitle,
     category: "",
     dateTime: "",
     description:"",
@@ -49,6 +50,7 @@ const BigCalendar = () => {
     endTime:""
   });
 
+  
   const calculatePopupPosition = (clientX, clientY) => {
     const offset = 200;
     const screenLimitX = window.innerWidth - offset;
@@ -87,6 +89,7 @@ const BigCalendar = () => {
   };
 
   const handleCalendarEvent = (event, e) => {
+    e.preventDefault();
     const { clientX, clientY } = e;
     calculatePopupPosition(clientX, clientY);
     setIsOpen(false);
@@ -116,7 +119,6 @@ const BigCalendar = () => {
 
       const originalDate = new Date(date2IST);
       const newDate = new Date(originalDate.getTime() + 1 * 60 * 1000);
-      //timeArray.push(date1IST);
 
       if (date1IST >= date2IST && date1IST <= newDate) {
         toast.success("alarm for reminder");
@@ -154,7 +156,6 @@ const BigCalendar = () => {
       const newDate = new Date(new Date(
         event.end.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
       ));
-     // timeArray.push(date1IST);
 
       if (date1IST <= date2IST && date2IST < newDate) {
         toast.success("alarm for reminder");
@@ -170,32 +171,16 @@ const BigCalendar = () => {
       return event;
     });
     appointments.push(eventArray);
-    //console.log(appointments[0],"====",todos[0]);
     setEvents(()=>{
       return todos[0].concat(appointments[0])
     });
   }; 
 
-
-  // (function () {
-  //   const now = new Date();
-  //   const currentTimestamp = now.getTime();
-  //   for (let i = 0; i < timeArray.length; i++) {
-  //     const targetTimestamp = timeArray[i].getTime();
-  //     const delay = targetTimestamp - currentTimestamp;
-  //     if(delay > 0){
-  //     setTimeout(() => {
-  //       window.location.reload();
-  //     }, delay);
-  //   }
-  //   }
-  // })();
-
   useEffect(() => {
     getTodoEvents();
     getAppointmentEvents();
   }, []);
-
+  
   const eventStyleGetter = (event, start, end, isSelected) => {
     if (event.customProp === "complete") {
       return {
@@ -222,7 +207,7 @@ const BigCalendar = () => {
   };
 
   const StyledCalendar = styled(Calendar)`
-    .rbc-day-bg,
+  .rbc-day-bg,
     .rbc-time-slot,
     .rbc-header {
       background-color: #282828;

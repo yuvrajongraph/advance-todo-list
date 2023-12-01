@@ -1,9 +1,11 @@
-import React from "react";
+import React,{useContext} from "react";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { useDeleteTodoItemMutation } from "../../redux/todo/todoApi";
 import { useDeleteAppointmentMutation } from "../../redux/appointment/appointmentApi";
 import { toast } from "react-toastify";
+import { useDeleteGoogleCalendarEventMutation } from "../../redux/auth/authApi";
+import CalendarContext from "../../Context/Calendar/CalendarContext";
 
 
 
@@ -16,15 +18,26 @@ const DeletePopUpScreen = ({
 }) => {
   const [deleteTodoItem] = useDeleteTodoItemMutation();
   const [deleteAppointment] = useDeleteAppointmentMutation();
+  const [deleteGoogleCalendarEvent] = useDeleteGoogleCalendarEventMutation();
   const handleClose = () => {
     setDeletePopUp(false);
   };
-
+  const {map,setMap} = useContext(CalendarContext);
   const confirmDeleteEvent = async (e) => {
     setDeletePopUp(false);
     const response = selectedEvent.category? await deleteTodoItem({ id: selectedEvent?.id }): await deleteAppointment({id:selectedEvent?.id});
     if (response.data) {
+      const map = new Map(JSON.parse(localStorage.getItem("map")));
+      const googleCalendarEventId = map.get(selectedEvent?.id);
+      const calendarResponse = await deleteGoogleCalendarEvent({id:googleCalendarEventId});
+      if(calendarResponse.data){
+        toast.success(calendarResponse?.data?.message);
+      }else{
+        toast.error(calendarResponse?.error?.data?.error);
+      }
       toast.success(response?.data?.message);
+      map.delete(selectedEvent?.id)
+      localStorage.setItem("map", JSON.stringify(Array.from(map)));
     } else {
       toast.error(response?.error?.data?.error);
     }

@@ -19,6 +19,8 @@ import BigCalendar from "./components/BigCalendar/BigCalendar";
 import UpdateEventScreen from "./components/EventCard/UpdateEventScreen";
 import Profile from "./components/Profile/Profile";
 import io from "socket.io-client";
+import GoogleRedirect from "./components/Google/GoogleRedirect";
+import GoogleContact from "./components/Google/GoogleContact";
 
 function App() {
   const [authenticated, cookie] = useAuth();
@@ -52,6 +54,8 @@ function App() {
             <Route path="/" element={<BigCalendar />} />
             <Route path="/update/:type" element={<UpdateEventScreen />} />
             <Route path="/profile" element={<Profile userDetail = {cookie.userData.details}/>} />
+            <Route path="/google" element={<GoogleRedirect />} />
+            <Route path="/contact" element={<GoogleContact />} />
           </Route>
         ) : (
           <Route path="/" element={<Navigate to={"/auth/login"} />} />

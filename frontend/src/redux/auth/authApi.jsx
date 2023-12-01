@@ -70,13 +70,37 @@ export const authApi = createApi({
         method: "GET",
       }),
     }),
-    googleContact: builder.query({
+    googleCalendar: builder.mutation({
+      query: ({title, startTime, endTime}) => ({
+        url: "/auth/google/calendar/insert",
+        method: "POST",
+        body:{
+          title, startTime,endTime
+        }
+      }),
+    }),
+    deleteGoogleCalendarEvent: builder.mutation({
+      query: ({id}) => ({
+        url: `/auth/google/calendar/delete/${id}`,
+        method: "DELETE",
+      }),
+    }),
+    updateGoogleCalendarEvent: builder.mutation({
+      query: ({id,title,startTime,endTime}) => ({
+        url: `/auth/google/calendar/update/${id}`,
+        method: "PATCH",
+        body:{
+          title, startTime,endTime
+        }
+      }),
+    }),
+    googleContact: builder.mutation({
       query: () => ({
-        url: "/auth/google/contact",
+        url: "/auth/google/contacts",
         method: "GET",
       }),
     }),
   }),
 });
 
-export const { useLoginUserMutation, useRegisterUserMutation, useRegisterUserVerificationMutation, useResetPasswordMutation, useResetPasswordMailMutation, useGoogleAuthMutation, useLogoutUserMutation, useGoogleContactQuery } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useRegisterUserVerificationMutation, useResetPasswordMutation, useResetPasswordMailMutation, useGoogleAuthMutation, useLogoutUserMutation, useGoogleContactMutation, useGoogleCalendarMutation, useDeleteGoogleCalendarEventMutation, useUpdateGoogleCalendarEventMutation } = authApi;

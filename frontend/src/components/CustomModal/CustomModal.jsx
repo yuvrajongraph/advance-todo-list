@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useCreateTodoItemMutation } from "../../redux/todo/todoApi";
 import { useCreateAppointmentMutation } from "../../redux/appointment/appointmentApi";
+import { useGoogleCalendarMutation } from "../../redux/auth/authApi";
 import { toast } from "react-toastify";
 import ModalNavbar from "./ModalNavbar";
 
@@ -10,6 +11,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { formatDateToYYYYMMDDTHHMM } from "../../utils/dateConversion";
+import CalendarContext from "../../Context/Calendar/CalendarContext";
 import "./CustomModal.css";
 
 
@@ -27,13 +29,14 @@ const CustomModal = ({
   const [selectedOption, setSelectedOption] = useState("normal");
   const options = ["normal", "food", "other"];
   const [activeLink, setActiveLink] = useState("todo");
-
+  //const {map, setMap} = useContext(CalendarContext);
   const { title, category, dateTime, description,startTime,endTime } = input;
   // const [selectedEvent, setSelectedEvent] = useState(null);
 
 
   const [createTodoItem] = useCreateTodoItemMutation();
   const [createAppointment]= useCreateAppointmentMutation();
+  const [googleCalendar] = useGoogleCalendarMutation();
 
   const handleOptionChange = (e) => {
     setSelectedOption(e.target.value);
@@ -83,8 +86,28 @@ const CustomModal = ({
     }) ;
 
     if (response.data) {
+      const start = activeLink === 'todo' ? dateTime : startTime;
+      const end = activeLink === 'todo' ? dateTime : endTime;
+      const calendarResponse = await googleCalendar({title,startTime: start,endTime: end});
+      if(calendarResponse.data){
+        toast.success(calendarResponse?.data?.message);
+      }else{
+        toast.error(calendarResponse?.error?.data?.error);
+      }
       toast.success(response?.data?.message);
-    } else {
+      const eventId =  response?.data?.data?._id
+      const googleCalendarId = calendarResponse?.data?.data?.id
+      if(JSON.parse(localStorage.getItem("map")) === null){
+        const intialMap = new Map();
+        intialMap.set(eventId,googleCalendarId);
+        localStorage.setItem("map", JSON.stringify(Array.from(intialMap)));
+      }else{
+        const map = JSON.parse(localStorage.getItem("map"));
+        const newMap = new Map(map);
+        newMap.set(eventId,googleCalendarId)
+        localStorage.setItem("map", JSON.stringify(Array.from(newMap)));
+      }
+  } else {
       toast.error(response?.error?.data?.error);
     }
     setInput({
@@ -97,7 +120,7 @@ const CustomModal = ({
     });
     setTimeout(() => {
       window.location.reload();
-    }, 1000);
+    }, 2000);
   };
 
   //   const closeModal = () => {

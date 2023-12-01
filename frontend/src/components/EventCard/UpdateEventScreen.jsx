@@ -9,6 +9,7 @@ import {
 import EventContext from "../../Context/Event/EventContext";
 import { useUpdateTodoItemMutation } from "../../redux/todo/todoApi";
 import { useUpdateAppointmentMutation } from "../../redux/appointment/appointmentApi";
+import { useUpdateGoogleCalendarEventMutation } from "../../redux/auth/authApi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
@@ -27,6 +28,7 @@ const UpdateEventScreen = () => {
   const options = ["normal", "food", "other"];
   const [updateTodoItem] = useUpdateTodoItemMutation();
   const [updateAppointment] = useUpdateAppointmentMutation();
+  const [updateGoogleCalendarEvent] = useUpdateGoogleCalendarEventMutation();
   const { dark, toggleTheme } = useContext(DarkThemeContext);
   const [selectedOption, setSelectedOption] = useState(selectedEvent.category);
 
@@ -103,6 +105,16 @@ const UpdateEventScreen = () => {
           endTime: input.endTime,
         });
     if (response.data) {
+      const map = new Map(JSON.parse(localStorage.getItem("map")));
+      const googleCalendarEventId = map.get(selectedEvent?.id);
+      const start = input.category? input.dateTime:input.startTime;
+      const end = input.category? input.dateTime:input.endTime;
+      const calendarResponse = await updateGoogleCalendarEvent({id:googleCalendarEventId,title,startTime:start,endTime:end});
+      if(calendarResponse.data){
+        toast.success(calendarResponse?.data?.message);
+      }else{
+        toast.error(calendarResponse?.error?.data?.error);
+      }
       toast.success(response?.data?.message);
     } else {
       toast.error(response?.error?.data?.error);

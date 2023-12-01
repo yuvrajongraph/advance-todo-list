@@ -24,6 +24,8 @@ const config = {
   CLOUD_NAME: process.env.CLOUD_NAME,
   API_KEY: process.env.API_KEY,
   API_SECRET: process.env.API_SECRET,
+  GOOGLE_REDIRECT_URI : process.env.GOOGLE_REDIRECT_URI,
+  CALENDAR_API_KEY: process.env.CALENDAR_API_KEY
 };
 
 module.exports = config;

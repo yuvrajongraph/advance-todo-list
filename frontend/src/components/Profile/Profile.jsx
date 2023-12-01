@@ -1,22 +1,13 @@
 import defaultImage from "../../assets/noprofilepicture.webp";
 import { Button } from "@mui/material";
 import { useState, useEffect } from "react";
-import {
-  useUploadImageMutation,
-  useGetSingleUserMutation,
-} from "../../redux/user/userApi";
-import ReactCrop from "react-image-crop";
-import "react-image-crop/dist/ReactCrop.css";
+import { useGetSingleUserMutation } from "../../redux/user/userApi";
 import UploadModal from "./UploadModal";
 
 const Profile = ({ userDetail }) => {
-  const [file, setFile] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [user, setUser] = useState(userDetail);
-  const [crop, setCrop] = useState({ aspect: 1 / 1 });
-  const [croppedImage, setCroppedImage] = useState(null);
   const [profileImage, setProfileImage] = useState("");
-  const [loading, setLoading] = useState(false);
   const [getSingleUser] = useGetSingleUserMutation();
 
   const handleShowModal = async (e) => {
@@ -56,7 +47,11 @@ const Profile = ({ userDetail }) => {
           className="h-[300px] w-[300px] mt-[20px] ml-[450px]"
         />
       </div>
-      <UploadModal visible={showModal} onClose={handleOnClose} setProfileImage={setProfileImage} />
+      <UploadModal
+        visible={showModal}
+        onClose={handleOnClose}
+        setProfileImage={setProfileImage}
+      />
     </>
   );
 };
