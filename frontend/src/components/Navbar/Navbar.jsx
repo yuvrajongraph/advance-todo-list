@@ -35,9 +35,13 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleGoogleSync = async () => {
+  const handleGoogleSync = async (e) => {
     //const response = await googleContact.refetch();
     //console.log(response);
+    if(JSON.parse(localStorage.getItem("isSync")) === null){
+      localStorage.setItem("isSync",true);
+    }
+    localStorage.setItem("isSync",true);
     window.open(`${import.meta.env.VITE_BACKEND_URL}/auth/google`, "_self");
   };
 
@@ -65,6 +69,10 @@ const Navbar = () => {
       setTimeout(() => {
         dispatch(logoutSuccess());
         cookies.remove("userData");
+        if(JSON.parse(localStorage.getItem("isSync")) === null){
+          localStorage.setItem("isSync",false);
+        }
+        localStorage.setItem("isSync",false);
         navigate("/");
         window.location.reload();
       }, 1000);
@@ -73,7 +81,7 @@ const Navbar = () => {
     }
   };
 
-  const userName = cookie?.userData?.details?.name.trim()?.replace(/ +/g, " ");
+  const userName = cookie?.userData?.details?.name.toLowerCase().trim()?.replace(/ +/g, " ");
   const userArray = userName?.split(" ");
   const firstCharacters = userArray?.map((str, index) => {
     if (index < 2) {
@@ -103,6 +111,7 @@ const Navbar = () => {
         <button
           type="button"
           onClick={handleGoogleSync}
+          id= "syncButton"
           className={` w-10 h-10 rounded-s flex items-center justify-center text-white font-semibold text-xl mr-[10px] ${dynamicClass}`}
           aria-haspopup="listbox"
           aria-expanded="true"

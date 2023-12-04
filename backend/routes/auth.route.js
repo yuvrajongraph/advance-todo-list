@@ -9,6 +9,8 @@ const config = require("../config/config");
 const { google } = require("googleapis");
 const dayjs = require("dayjs");
 const { commonErrorHandler } = require("../helper/errorHandler.helper");
+const User = require("../models/user.model")
+const jwt = require("jsonwebtoken")
 
 router.post(
   "/signup",
@@ -20,6 +22,12 @@ router.post(
   "/signin",
   authValidator.userSignInSchema,
   authController.userSignIn
+);
+
+router.post(
+  "/google/signin",
+  authValidator.userGoogleSignInSchema,
+  authController.userGoogleSignIn
 );
 
 router.get("/signup", authController.userSignUpVerification);
@@ -90,9 +98,6 @@ router.get("/google/callback", async (req, res) => {
   return res.redirect(
     `http://127.0.0.1:5173/google?oauth2Client=${JSON.stringify(oauth2Client)}`
   );
-  return res.json({
-    message: "Login Successful by google",
-  });
 });
 
 router.get("/google/oauthuser", async (req, res) => {
@@ -107,12 +112,29 @@ router.get("/google/oauthuser", async (req, res) => {
   }
   const oauth2 = google.oauth2({ version: "v2", auth: oauth2Client });
   const userInfo = await oauth2.userinfo.get();
+  const body = userInfo.data;
+  const userWithEmail = await User.findOne({ email: body.email });
+
+  if (body?.email === userWithEmail?.email) {
+    const token = jwt.sign({ _id: userWithEmail._id }, config.JWT_SECRET);
+    return commonErrorHandler(
+      req,
+      res,
+      { data: {token:token, details: userWithEmail}, quote: "User sign in with google successfully" },
+      200
+    );
+    }else{
+  body.password = jwt.sign({ password: body.password }, config.JWT_SECRET);
+  const user = new User({name:body.name,email:body.email,password:body.password,isRegister:true,url:body.picture});
+  const data = await user.save();
+  const token = jwt.sign({ _id: data._id }, config.JWT_SECRET);
   return commonErrorHandler(
     req,
     res,
-    { data: userInfo.data, quote: "User sign in with google successfully" },
+    { data: {token:token, details:data}, quote: "User sign in with google successfully" },
     200
   );
+  }
 });
 
 router.get("/google/contacts", async (req, res) => {

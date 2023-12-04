@@ -66,7 +66,7 @@ export const authApi = createApi({
     }),
     googleAuth: builder.mutation({
       query: () => ({
-        url: "/auth/google",
+        url: "/auth/google/oauthuser",
         method: "GET",
       }),
     }),

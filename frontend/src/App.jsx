@@ -54,12 +54,13 @@ function App() {
             <Route path="/" element={<BigCalendar />} />
             <Route path="/update/:type" element={<UpdateEventScreen />} />
             <Route path="/profile" element={<Profile userDetail = {cookie.userData.details}/>} />
-            <Route path="/google" element={<GoogleRedirect />} />
             <Route path="/contact" element={<GoogleContact />} />
+            
           </Route>
         ) : (
           <Route path="/" element={<Navigate to={"/auth/login"} />} />
         )}
+       <Route path="/google" element={<GoogleRedirect />} />
         <Route path="/auth" element={<AuthBackground />}>
           {authenticated ? (
             <Route path="login" element={<Navigate to={"/"} />} />

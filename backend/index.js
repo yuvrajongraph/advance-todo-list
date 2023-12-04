@@ -31,8 +31,7 @@ const startServer = async function () {
       currentDateTime.setMilliseconds(0);
 
       todos.map((val) => {
-        val.dateTime.setMinutes(val.dateTime.getMinutes() - 1);
-        if (
+       if (
           new Date(val.dateTime).toISOString() === currentDateTime.toISOString()
         ) {
           notifier.notify(`Alarm notification for event ${val.title}`);
@@ -40,7 +39,6 @@ const startServer = async function () {
         }
       });
       appointments.map((val) => {
-        val.startTime.setMinutes(val.startTime.getMinutes() - 1);
         if (
           new Date(val.startTime).toISOString() ===
           currentDateTime.toISOString()

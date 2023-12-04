@@ -101,6 +101,7 @@ const BigCalendar = () => {
     setIsEventOpen(!isEventOpen);
   };
 
+
   const getTodoEvents = async () => {
     const response = await getAllTodoItems();
     
@@ -117,16 +118,16 @@ const BigCalendar = () => {
         new Date()
       );
 
-      const originalDate = new Date(date2IST);
-      const newDate = new Date(originalDate.getTime() + 1 * 60 * 1000);
-
-      if (date1IST >= date2IST && date1IST <= newDate) {
+      const originalDate = new Date(date1IST);
+      const newDate = new Date(originalDate.getTime() + 2 * 60 * 1000);
+        const diffTime = newDate-date2IST > 0 ? newDate-date2IST: 0;
+      if (date1IST <= date2IST && date2IST < newDate) {
         toast.success("alarm for reminder");
         event.customProp = "important";
         setTimeout(() => {
           window.location.reload();
-        }, 60000);
-      } else if (date1IST < newDate) {
+        }, diffTime);
+      } else if (date2IST >= newDate) {
         event.customProp = "complete";
       } else {
         event.customProp = "normal";
@@ -156,13 +157,13 @@ const BigCalendar = () => {
       const newDate = new Date(new Date(
         event.end.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
       ));
-
       if (date1IST <= date2IST && date2IST < newDate) {
         toast.success("alarm for reminder");
         event.customProp = "important";
+        const diffTime = newDate-date2IST > 0 ? newDate-date2IST: 0;
         setTimeout(() => {
           window.location.reload();
-        }, 60000);
+        }, diffTime);
       } else if (date2IST >= newDate) {
         event.customProp = "complete";
       } else {
@@ -235,6 +236,13 @@ const BigCalendar = () => {
     }
   `;
 
+  const handleNavigate = (newDate, view, action) => {
+    console.log(action);
+    if (action === 'NEXT' || action === 'PREV') {
+      return true;
+    }
+}
+
   return (
     <>
       <div className=" relative w-2/3 mt-3 z-10">
@@ -250,6 +258,7 @@ const BigCalendar = () => {
               onSelectEvent={handleCalendarEvent}
               views={["month", "week", "day"]}
               eventPropGetter={eventStyleGetter}
+              onNavigate={handleNavigate}
             />
           ) : (
             <Calendar

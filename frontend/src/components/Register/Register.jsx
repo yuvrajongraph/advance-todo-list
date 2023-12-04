@@ -29,6 +29,9 @@ const Register = () => {
 
   const handleGoogleLogin = (e) => {
     e.preventDefault();
+    if(JSON.parse(localStorage.getItem("isSync")) === null){
+      localStorage.setItem("isSync",false);
+    }
     window.open(`${import.meta.env.VITE_BACKEND_URL}/auth/google`, "_self");
   };
 

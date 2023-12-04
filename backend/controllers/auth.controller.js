@@ -41,10 +41,10 @@ const userSignUp = asyncHandler(async (req, res) => {
     );
   } else {
     // create user schema and save in database
-   
+
     const user = new User(body);
     const data = await user.save();
-    console.log(data)
+    console.log(data);
     // create the token for sign up verification
     const token = jwt.sign(
       { email: data.email, id: data._id },
@@ -182,6 +182,19 @@ const userSignIn = asyncHandler(async (req, res) => {
   );
 });
 
+const userGoogleSignIn = asyncHandler(async (req, res) => {
+  const body = req.body;
+  const userWithEmail = await User.findOne({ email: body.email });
+
+  if (body.email === userWithEmail.email) {
+    return res.redirect(`http://127.0.0.1:5173`);
+  }
+  body.password = jwt.sign({ password: body.password }, config.JWT_SECRET);
+  const user = new User(body);
+  await user.save();
+  return res.redirect(`http://127.0.0.1:5173`);
+});
+
 // @desc    Signout user
 // @route   POST /api/auth/signout
 // @access  Private
@@ -297,7 +310,7 @@ const userResetPassword = asyncHandler(async (req, res) => {
   // add the decoded token in the set
   tokenSet.add(tokenDecoded);
   const hashPassword = generateHashPassword(body.newPassword);
-  
+
   // update the field password in user DB with new password
   await User.findOneAndUpdate(
     { _id: tokenDecoded._id },
@@ -313,20 +326,19 @@ const userResetPassword = asyncHandler(async (req, res) => {
   );
 });
 
-const googleAuthSuccess = (req,res)=>{
-  console.log(req.user)
-   return commonErrorHandler(
+const googleAuthSuccess = (req, res) => {
+  console.log(req.user);
+  return commonErrorHandler(
     req,
     res,
     { data: req.user.displayName, quote: "User login success by google" },
     202
   );
- 
-}
+};
 
-const googleAuthFailure = asyncHandler(async(req,res)=>{
-  return res.send("Fail authentication!!")
-})
+const googleAuthFailure = asyncHandler(async (req, res) => {
+  return res.send("Fail authentication!!");
+});
 
 module.exports = {
   userSignUp,
@@ -336,5 +348,6 @@ module.exports = {
   userResetPassword,
   userResetPasswordMail,
   googleAuthSuccess,
-  googleAuthFailure
+  googleAuthFailure,
+  userGoogleSignIn,
 };
