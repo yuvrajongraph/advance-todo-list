@@ -32,15 +32,6 @@ const userSignInSchema = async (req, res, next) => {
   validateRequest(req, res, next, schema, "body");
 };
 
-const userGoogleSignInSchema = async (req, res, next) => {
-  const schema = Joi.object({
-    name,
-    email,
-    password,
-    url
-  });
-  validateRequest(req, res, next, schema, "body");
-};
 
 const userResetPasswordSchema = async (req, res, next) => {
   const schema = Joi.object({
@@ -50,4 +41,4 @@ const userResetPasswordSchema = async (req, res, next) => {
   validateRequest(req, res, next, schema, "body");
 };
 
-module.exports = { userSignInSchema, userSignUpSchema, userResetPasswordSchema, userGoogleSignInSchema };
+module.exports = { userSignInSchema, userSignUpSchema, userResetPasswordSchema };

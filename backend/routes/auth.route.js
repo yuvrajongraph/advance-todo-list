@@ -16,12 +16,6 @@ router.post(
   authController.userSignIn
 );
 
-router.post(
-  "/google/signin",
-  authValidator.userGoogleSignInSchema,
-  authController.userGoogleSignIn
-);
-
 router.get("/signup", authController.userSignUpVerification);
 
 router.post("/signout", isAuthenticate.verifyToken, authController.userSignOut);

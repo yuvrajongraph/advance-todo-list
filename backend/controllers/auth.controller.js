@@ -191,19 +191,6 @@ const userSignIn = asyncHandler(async (req, res) => {
   );
 });
 
-const userGoogleSignIn = asyncHandler(async (req, res) => {
-  const body = req.body;
-  const userWithEmail = await User.findOne({ email: body.email });
-
-  if (body.email === userWithEmail.email) {
-    return res.redirect(`http://127.0.0.1:5173`);
-  }
-  body.password = jwt.sign({ password: body.password }, config.JWT_SECRET);
-  const user = new User(body);
-  await user.save();
-  return res.redirect(`http://127.0.0.1:5173`);
-});
-
 // @desc    Signout user
 // @route   POST /api/auth/signout
 // @access  Private
@@ -357,7 +344,7 @@ const googleAuthRedirect = asyncHandler(async(req,res)=>{
   oauth2Client.setCredentials(tokens);
 
   return res.redirect(
-    `http://127.0.0.1:5173/google?oauth2Client=${JSON.stringify(oauth2Client)}`
+    `${config.FRONTEND_URL}/google?oauth2Client=${JSON.stringify(oauth2Client)}`
   );
 })
 
@@ -574,7 +561,6 @@ module.exports = {
   userSignUpVerification,
   userResetPassword,
   userResetPasswordMail,
-  userGoogleSignIn,
   googleAuth,
   googleAuthRedirect,
   googleOauthUser,
