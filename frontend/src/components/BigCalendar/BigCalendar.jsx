@@ -19,6 +19,7 @@ const localizer = momentLocalizer(moment);
 
 const BigCalendar = () => {
   const [events, setEvents] = useState([]);
+  const [date, setDate] = useState(new Date());
   const calendarEvent = useContext(EventContext);
   const { selectedEvent, setSelectedEvent } = calendarEvent;
   const { dark, toggleTheme } = useContext(DarkThemeContext);
@@ -237,10 +238,7 @@ const BigCalendar = () => {
   `;
 
   const handleNavigate = (newDate, view, action) => {
-    console.log(action);
-    if (action === 'NEXT' || action === 'PREV') {
-      return true;
-    }
+    setDate(newDate);
 }
 
   return (
@@ -251,6 +249,7 @@ const BigCalendar = () => {
             <StyledCalendar
               localizer={localizer}
               events={events}
+              date={date}
               startAccessor="start"
               endAccessor="end"
               onSelectSlot={handleSlot}
@@ -264,6 +263,7 @@ const BigCalendar = () => {
             <Calendar
               localizer={localizer}
               events={events}
+              date={date}
               startAccessor="start"
               endAccessor="end"
               onSelectSlot={handleSlot}
@@ -271,6 +271,7 @@ const BigCalendar = () => {
               onSelectEvent={handleCalendarEvent}
               views={["month", "week", "day"]}
               eventPropGetter={eventStyleGetter}
+              onNavigate={handleNavigate}
             />
           )}
         </div>
