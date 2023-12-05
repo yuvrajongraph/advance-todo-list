@@ -12,7 +12,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { formatDateToYYYYMMDDTHHMM } from "../../utils/dateConversion";
 import CalendarContext from "../../Context/Calendar/CalendarContext";
+import { useDispatch } from "react-redux";
 import "./CustomModal.css";
+import { addTodoItem } from "../../redux/todo/todoSlice";
 
 
 const CustomModal = ({
@@ -32,7 +34,7 @@ const CustomModal = ({
   //const {map, setMap} = useContext(CalendarContext);
   const { title, category, dateTime, description,startTime,endTime } = input;
   // const [selectedEvent, setSelectedEvent] = useState(null);
-
+  const dispatch = useDispatch();
 
   const [createTodoItem] = useCreateTodoItemMutation();
   const [createAppointment]= useCreateAppointmentMutation();
@@ -94,6 +96,7 @@ const CustomModal = ({
       }else{
         toast.error(calendarResponse?.error?.data?.error);
       }
+      dispatch(addTodoItem(response?.data?.data))
       toast.success(response?.data?.message);
       const eventId =  response?.data?.data?._id
       const googleCalendarId = calendarResponse?.data?.data?.id

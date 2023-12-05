@@ -6,6 +6,8 @@ import { useDeleteAppointmentMutation } from "../../redux/appointment/appointmen
 import { toast } from "react-toastify";
 import { useDeleteGoogleCalendarEventMutation } from "../../redux/auth/authApi";
 import CalendarContext from "../../Context/Calendar/CalendarContext";
+import { useDispatch } from "react-redux";
+import { removeSingleTodoItem } from "../../redux/todo/todoSlice";
 
 
 
@@ -16,6 +18,7 @@ const DeletePopUpScreen = ({
   selectedEvent,
   setSelectedEvent,
 }) => {
+  const dispatch = useDispatch()
   const [deleteTodoItem] = useDeleteTodoItemMutation();
   const [deleteAppointment] = useDeleteAppointmentMutation();
   const [deleteGoogleCalendarEvent] = useDeleteGoogleCalendarEventMutation();
@@ -35,6 +38,7 @@ const DeletePopUpScreen = ({
       }else{
         toast.error(calendarResponse?.error?.data?.error);
       }
+      dispatch(removeSingleTodoItem(selectedEvent.id))
       toast.success(response?.data?.message);
       map.delete(selectedEvent?.id)
       localStorage.setItem("map", JSON.stringify(Array.from(map)));

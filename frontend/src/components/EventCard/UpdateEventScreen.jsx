@@ -19,7 +19,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import DarkThemeContext from "../../Context/DarkTheme/DarkThemeContext";
 import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import "./UpdateEventScreen.css";
+import { updateSingleTodoItem } from "../../redux/todo/todoSlice";
 
 const UpdateEventScreen = () => {
   const calendarEvent = useContext(EventContext);
@@ -31,7 +33,7 @@ const UpdateEventScreen = () => {
   const [updateGoogleCalendarEvent] = useUpdateGoogleCalendarEventMutation();
   const { dark, toggleTheme } = useContext(DarkThemeContext);
   const [selectedOption, setSelectedOption] = useState(selectedEvent.category);
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [input, setInput] = useState({
     title: selectedEvent.title,
@@ -115,6 +117,7 @@ const UpdateEventScreen = () => {
       }else{
         toast.error(calendarResponse?.error?.data?.error);
       }
+      dispatch(updateSingleTodoItem({id:selectedEvent.id, data:response.data.data}))
       toast.success(response?.data?.message);
     } else {
       toast.error(response?.error?.data?.error);
