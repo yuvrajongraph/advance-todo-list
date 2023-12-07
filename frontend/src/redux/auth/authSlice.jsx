@@ -5,6 +5,7 @@ const initialState = {
   error: null,
 };
 
+// create the authSlice for authentication purpose  and make reducer function to save the token in the store so that all rtk query can be call
 const authSlice = createSlice({
   name: "user",
   initialState,

@@ -18,11 +18,13 @@ import {
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "@reduxjs/toolkit";
 
+// for persist the data even after reloading of the page in the rtk store
 const persistConfig = {
   key: "root",
   storage,
 };
 
+// configure the slices  and rtk query in the store
 const store = configureStore({
   reducer: persistReducer(persistConfig, combineReducers({
     users: authSlice,

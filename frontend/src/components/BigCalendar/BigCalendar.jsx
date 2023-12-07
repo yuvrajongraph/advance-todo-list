@@ -51,7 +51,7 @@ const BigCalendar = () => {
     endTime:""
   });
 
-  
+  // for calculating where the pop up appears on the calendar
   const calculatePopupPosition = (clientX, clientY) => {
     const offset = 200;
     const screenLimitX = window.innerWidth - offset;
@@ -71,6 +71,7 @@ const BigCalendar = () => {
     setPopupPosition({ top, left });
   };
 
+  // functionality for handling the empty slot on calendar
   const handleSlot = ({ start, end, box }) => {
     setIsEventOpen(false);
     const { clientX, clientY } = box;
@@ -89,6 +90,7 @@ const BigCalendar = () => {
     input.endTime = endTime;
   };
 
+  // when a user click on a event that have been already made on the calendar
   const handleCalendarEvent = (event, e) => {
     e.preventDefault();
     const { clientX, clientY } = e;
@@ -102,7 +104,7 @@ const BigCalendar = () => {
     setIsEventOpen(!isEventOpen);
   };
 
-
+ // for getting all the todo events on the calendar when intial renders
   const getTodoEvents = async () => {
     const response = await getAllTodoItems();
     
@@ -140,6 +142,7 @@ const BigCalendar = () => {
     todos.push(eventArray);
   };
   
+  // for getting all the appointment events on the calendar when intial renders
   const getAppointmentEvents = async () => {
     const response = await getAllAppointments.refetch();
     const eventArray = response?.data?.data?.map((item) => {
@@ -184,6 +187,8 @@ const BigCalendar = () => {
   }, []);
   
   const eventStyleGetter = (event, start, end, isSelected) => {
+
+    // for conditional functioning of the calendar when the time matched (alarming the events) and time got expire
     if (event.customProp === "complete") {
       return {
         className: "complete-event",
@@ -208,6 +213,7 @@ const BigCalendar = () => {
     }
   };
 
+  // style the calendar in dark mode
   const StyledCalendar = styled(Calendar)`
   .rbc-day-bg,
     .rbc-time-slot,
@@ -236,7 +242,8 @@ const BigCalendar = () => {
       background-color: #3174ad;
     }
   `;
-
+  
+  // to prevent the default navigation to the today page of calendar whenever click to event and empty slot of calendar
   const handleNavigate = (newDate, view, action) => {
     setDate(newDate);
 }

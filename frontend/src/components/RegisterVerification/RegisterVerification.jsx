@@ -7,6 +7,7 @@ const RegisterVerification = () => {
     useRegisterUserVerificationMutation();
   const handleClick = async (e) => {
     e.preventDefault();
+    // take the token from query and verify that it is the correct user
     const searchParams = new URLSearchParams(window.location.search);
     const token = searchParams.get("token");
     const response = await registerUserVerification(token);
@@ -17,6 +18,7 @@ const RegisterVerification = () => {
       toast.error(response?.error?.data?.error);
     }
   };
+  // the registration verification email that you get from email
   return (
     <>
       <div className="min-h-screen flex items-center justify-center bg-gray-100">

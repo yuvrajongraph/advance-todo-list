@@ -14,7 +14,7 @@ import { withCookies } from "react-cookie";
 import useAuth from "./hooks/useAuth";
 import RegisterVerification from "./components/RegisterVerification/RegisterVerification";
 import ResetPassword from "./components/ResetPassword/ResetPassword";
-import AppLayout from "./components/Applayout/Applayout";
+import AppLayout from "./components/AppLayout/AppLayout";
 import BigCalendar from "./components/BigCalendar/BigCalendar";
 import UpdateEventScreen from "./components/EventCard/UpdateEventScreen";
 import Profile from "./components/Profile/Profile";
@@ -25,14 +25,18 @@ import GoogleContact from "./components/Google/GoogleContact";
 function App() {
   const [authenticated, cookie] = useAuth();
     useEffect(() => {
+
+    // create the web socket connection on the frontend side
     const socket = io(`${import.meta.env.VITE_BACKEND_URL_TWO}`,{
       withCredentials: true 
     });
 
+    // for connecting the socket to server
     socket.on("connect", () => {
       console.log("Connected to server");
     });
 
+    // message for automatic reloading of the page from backend
     socket.on("reloadPage", () => {
       window.location.reload();
     });
@@ -41,6 +45,7 @@ function App() {
       ...window.process,
     };
 
+    // socket get disconnected when this component get unmounted
     return () => {
       socket.disconnect();
     };

@@ -11,11 +11,14 @@ const GoogleContact = () => {
   const { contactName, setContactName } = useContext(ContactContext);
   const { dark, toggleTheme } = useContext(DarkThemeContext);
   const dynamicClass = dark?  `bg-[#282828] text-white`:''
+
+  // fetch the google contact api to fetch the list of contact
   const getContacts = async () => {
     const response = await googleContact();
     setContactList(response.data.data);
   };
 
+  // set the state variable in Contact Context to a specific contact name from the list
   const handleContact = (contact) => {
     setContactName(contact);
     navigate("/");

@@ -11,6 +11,7 @@ const startServer = async function () {
   try {
     console.log("... Microservice db ✔");
 
+    // create a web soket connection on server side
     const server = http.createServer(app);
     const io = new Server(server, {
       cors: {
@@ -24,6 +25,7 @@ const startServer = async function () {
     server.listen(config.SERVER_PORT);
     console.log(`--- Server started on ${config.SERVER_PORT} ---\n\n`);
 
+    // create a schedular to the time of the events made on the calendar
     const job = schedule.scheduleJob("*/1 * * * * *", async function () {
       const todos = await Todo.find({});
       const appointments = await Appointment.find({});
@@ -34,7 +36,9 @@ const startServer = async function () {
        if (
           new Date(val.dateTime).toISOString() === currentDateTime.toISOString()
         ) {
+          // for system notification
           notifier.notify(`Alarm notification for event ${val.title}`);
+          // automatic reload when time got matched
           io.emit("reloadPage");
         }
       });

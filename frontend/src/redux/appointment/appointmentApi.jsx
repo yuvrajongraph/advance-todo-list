@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+// set the header before fetching the api
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BACKEND_URL,
   prepareHeaders: (headers, { getState }) => {
@@ -10,11 +11,13 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
+// setting the base url and headers for necessary fetching using rtk query
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
   return result;
 };
 
+// create the mutation and query for fetching the appointment apis
 export const appointmentApi = createApi({
   reducerPath: "appointmentApi",
   tagTypes: ["appointments"],

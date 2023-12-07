@@ -1,3 +1,4 @@
+// function to handle the comparision between two date and time
 export const compareIst = (date1, date2) => {
   const istTimeZone = "Asia/Kolkata";
   const date1IST = new Date(

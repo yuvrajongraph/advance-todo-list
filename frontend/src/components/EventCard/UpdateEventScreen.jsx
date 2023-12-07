@@ -4,7 +4,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import {
   formatDateToYYYYMMDDTHHMM,
-  formatDateToYYYYMMDD,
 } from "../../utils/dateConversion";
 import EventContext from "../../Context/Event/EventContext";
 import { useUpdateTodoItemMutation } from "../../redux/todo/todoApi";
@@ -42,6 +41,7 @@ const UpdateEventScreen = () => {
     startTime: formatDateToYYYYMMDDTHHMM(new Date(selectedEvent.start)),
     endTime: formatDateToYYYYMMDDTHHMM(new Date(selectedEvent.end)),
   });
+  // style the update the eventy screen in dark theme
   const styleTextField = dark
     ? {
         "label.Mui-focused": {
@@ -90,6 +90,7 @@ const UpdateEventScreen = () => {
     setSelectedOption(event.target.value);
   };
 
+  // update the event in DB through frontend
   const confirmUpdateEvent = async (e) => {
     const response = selectedEvent.category
       ? await updateTodoItem({
@@ -107,10 +108,12 @@ const UpdateEventScreen = () => {
           endTime: input.endTime,
         });
     if (response.data) {
+      // retrive the value from map of a particular event id of calendar used in app
       const map = new Map(JSON.parse(localStorage.getItem("map")));
       const googleCalendarEventId = map.get(selectedEvent?.id);
       const start = input.category? input.dateTime:input.startTime;
       const end = input.category? input.dateTime:input.endTime;
+       // update the event in google calendar as well 
       const calendarResponse = await updateGoogleCalendarEvent({id:googleCalendarEventId,title,startTime:start,endTime:end});
       if(calendarResponse.data){
         toast.success(calendarResponse?.data?.message);

@@ -18,6 +18,7 @@ const Login = () => {
     password: "",
   });
 
+  // redirect to google oAuth consent screen
   const handleGoogleLogin = async (e) => {
     e.preventDefault();
     if(JSON.parse(localStorage.getItem("isSync")) === null){
@@ -37,6 +38,7 @@ const Login = () => {
     });
   };
 
+  // use the login API in frontend using rtk query
   const handleLogin = async (e) => {
     e.preventDefault();
     const body = {

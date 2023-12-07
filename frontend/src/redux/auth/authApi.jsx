@@ -15,6 +15,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
   return result;
 };
 
+// create the mutation and query for fetching the authentication apis
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: baseQueryWithReauth,

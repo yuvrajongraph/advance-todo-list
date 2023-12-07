@@ -331,11 +331,12 @@ const googleAuth = asyncHandler(async(req,res)=>{
       "https://www.googleapis.com/auth/calendar",
       "https://www.googleapis.com/auth/userinfo.email",
       "https://www.googleapis.com/auth/userinfo.profile",
-    ], // Scope for accessing contacts
+    ], // Scope for accessing contacts,calendar,email,profile
   });
   res.redirect(authUrl);
 })
 
+// Redirect to /google/callback api where we can exchange the authorization token to get refresh and access token
 const googleAuthRedirect = asyncHandler(async(req,res)=>{
   const code = req.query.code;
   const { tokens } = await oauth2Client.getToken(code);
@@ -348,7 +349,9 @@ const googleAuthRedirect = asyncHandler(async(req,res)=>{
   );
 })
 
+
 const googleOauthUser = asyncHandler(async(req,res)=>{
+  // Manual syncing with google account
   if (!oauth2Client.credentials.refresh_token) {
     return commonErrorHandler(
       req,
@@ -359,10 +362,12 @@ const googleOauthUser = asyncHandler(async(req,res)=>{
     );
   }
   const oauth2 = google.oauth2({ version: "v2", auth: oauth2Client });
+  // Retreive the profile from google
   const userInfo = await oauth2.userinfo.get();
   const body = userInfo.data;
   const userWithEmail = await User.findOne({ email: body.email });
 
+  // in case if user already sign in with google
   if (body?.email === userWithEmail?.email) {
     const token = jwt.sign({ _id: userWithEmail._id }, config.JWT_SECRET);
     return commonErrorHandler(
@@ -372,7 +377,10 @@ const googleOauthUser = asyncHandler(async(req,res)=>{
       200
     );
     }else{
+  // Login with the google for first time 
+  // generate a random password so user cannot get login manually
   body.password = jwt.sign({ password: body.password }, config.JWT_SECRET);
+  // save the user in database
   const user = new User({name:body.name,email:body.email,password:body.password,isRegister:true,url:body.picture});
   const data = await user.save();
   const token = jwt.sign({ _id: data._id }, config.JWT_SECRET);
@@ -386,6 +394,7 @@ const googleOauthUser = asyncHandler(async(req,res)=>{
 })
 
 const googleContacts = asyncHandler(async(req,res)=>{
+  // Manual syncing with google account
   if (!oauth2Client.credentials.refresh_token) {
     return commonErrorHandler(
       req,
@@ -425,6 +434,7 @@ const calendar = google.calendar({
 });
 
 const createGoogleCalendarEvent = asyncHandler(async(req,res)=>{
+  // Manual syncing with google account
   if (!oauth2Client.credentials.refresh_token) {
     return commonErrorHandler(
       req,
@@ -436,6 +446,7 @@ const createGoogleCalendarEvent = asyncHandler(async(req,res)=>{
   }
   const body = req.body;
 
+  // insert the same event from application in the google calendar with that google account that got sync
   const createdEvent = await calendar.events.insert({
     calendarId: "primary",
     auth: oauth2Client,
@@ -470,6 +481,7 @@ const createGoogleCalendarEvent = asyncHandler(async(req,res)=>{
 })
 
 const deleteGoogleCalendarEvent = asyncHandler(async(req,res)=>{
+  // Manual syncing with google account
   if (!oauth2Client.credentials.refresh_token) {
     return commonErrorHandler(
       req,
@@ -479,7 +491,7 @@ const deleteGoogleCalendarEvent = asyncHandler(async(req,res)=>{
       "Please, Sync with the Google first to create your event in google calendar too"
     );
   }
-
+  // delete the same event from application in the google calendar with that google account that got sync
   calendar.events.delete(
     {
       calendarId: "primary",
@@ -503,6 +515,7 @@ const deleteGoogleCalendarEvent = asyncHandler(async(req,res)=>{
 })
 
 const updateGoogleCalendarEvent = asyncHandler(async(req,res)=>{
+  // Manual syncing with google account
   if (!oauth2Client.credentials.refresh_token) {
     return commonErrorHandler(
       req,
@@ -514,6 +527,7 @@ const updateGoogleCalendarEvent = asyncHandler(async(req,res)=>{
   }
   const body = req.body;
 
+   // update the same event from application in the google calendar with that google account that got sync
   calendar.events.update(
     {
       calendarId: "primary",

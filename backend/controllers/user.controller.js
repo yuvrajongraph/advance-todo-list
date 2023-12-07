@@ -4,6 +4,10 @@ const User = require("../models/user.model");
 const fs = require("fs");
 const uploadImageCloudinary = require("../utils/uploadImageCloudinary");
 
+// @desc    Upload a profile image
+// @route   POST  /api/user/upload-image
+// @access  Private
+
 const uploadImage = asyncHandler(async (req, res) => {
   const file = req.file;
 
@@ -23,6 +27,10 @@ const uploadImage = asyncHandler(async (req, res) => {
     200
   );
 });
+
+// @desc    Get the particular user detail which is login
+// @route   GET  /api/user
+// @access  Private
 
 const getSingleUser = asyncHandler(async (req, res) => {
   const userData = await User.findOne({ _id: req.user._id });

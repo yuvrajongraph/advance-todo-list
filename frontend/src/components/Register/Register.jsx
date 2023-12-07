@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 
+// fetch the register API using rtk query
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ const Register = () => {
     });
   };
 
+  // handle the google login through frontend
   const handleGoogleLogin = (e) => {
     e.preventDefault();
     if(JSON.parse(localStorage.getItem("isSync")) === null){

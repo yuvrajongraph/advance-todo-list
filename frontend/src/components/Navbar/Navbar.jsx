@@ -35,6 +35,7 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
+  // redirect to google consent screen 
   const handleGoogleSync = async (e) => {
     //const response = await googleContact.refetch();
     //console.log(response);
@@ -45,10 +46,13 @@ const Navbar = () => {
     window.open(`${import.meta.env.VITE_BACKEND_URL}/auth/google`, "_self");
   };
 
+  // redirect to the screen where the contact list is display on frontend
   const handleContact = (e) => {
     e.preventDefault();
     navigate("/contact");
   };
+
+  // send the link for reset password to the mail
   const handleMailFunctionality = async (e) => {
     e.preventDefault();
     toggleDropdown();
@@ -60,6 +64,7 @@ const Navbar = () => {
     }
   };
 
+  // handle the Logout functionality through frontend
   const handleLogout = async (e) => {
     e.preventDefault();
     toggleDropdown();

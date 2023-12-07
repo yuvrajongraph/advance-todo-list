@@ -15,6 +15,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
   return result;
 };
 
+// create the mutation and query for fetching the todo apis
 export const todoApi = createApi({
   reducerPath: "todoApi",
   tagTypes: ["todos"],

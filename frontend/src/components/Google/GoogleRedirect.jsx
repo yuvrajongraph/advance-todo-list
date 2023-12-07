@@ -14,12 +14,15 @@ const GoogleRedirect = () => {
     const [cookies, setCookie] = useCookies(["userData"]);
     const navigate = useNavigate();
     const getParams = async()=>{
+      // isSync key is true when we do manual syncing and false for login with google part
       if (JSON.parse(localStorage.getItem("isSync")) === true){
        
+        // set oauthClient in local storage
          localStorage.setItem("oauth2Client",oauth2Client)
          navigate("/")
          window.location.reload();
       }else{
+        // when it is not manual syncing for the login with google part
         const response = await googleAuth();
         if(response.data){
           dispatch(loginSuccess(response?.data?.data));

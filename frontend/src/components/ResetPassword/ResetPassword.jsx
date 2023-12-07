@@ -17,6 +17,8 @@ const ResetPassword = () => {
     useResetPasswordMutation();
   const handleResetPassword = async (e) => {
     e.preventDefault();
+
+     // take the token from query and verify that it is the correct user
     const searchParams = new URLSearchParams(window.location.search);
     const token = searchParams.get("token");
     const body = {
@@ -37,6 +39,8 @@ const ResetPassword = () => {
       toast.error(response?.error?.data?.error);
     }
   };
+
+  // the reset password screen that you get from email
   return (
     <>
       <div className="flex justify-center items-center h-screen">

@@ -22,12 +22,14 @@ const UploadModal = ({ visible, onClose, setProfileImage }) => {
 
   //const [uploadImage] = useUploadImageMutation();
 
+  // set the file that have choosen from frontend
   const handleImageData = async (e) => {
     e.preventDefault();
     originalFile = e.target.files[0];
     setFile(URL.createObjectURL(e.target.files[0]));
   };
 
+  // handle the cropping functionality
   const handleCropComplete = (cropData) => {
     if (cropData.width && cropData.height) {
       setIsCropImage(true);
@@ -62,6 +64,7 @@ const UploadModal = ({ visible, onClose, setProfileImage }) => {
     };
   };
 
+  // give the image file to backend so that it can set the user profile image
   const handleImageUpload = async (e) => {
     e.preventDefault();
     if (file) {
@@ -74,6 +77,7 @@ const UploadModal = ({ visible, onClose, setProfileImage }) => {
         headers: {
            'Authorization': `Bearer ${yourToken}`,
         },
+        // for keeping the track of progress bar of image get upload according to its size
         onUploadProgress: ({loaded,total}) => {
           const progress = Math.floor((loaded / total) * 100);
           setProgress(progress);

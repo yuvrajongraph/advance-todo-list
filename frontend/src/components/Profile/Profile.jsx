@@ -28,7 +28,7 @@ const Profile = ({ userDetail }) => {
   useEffect(() => {
     getUser();
   }, []);
-
+ // it is a profile section where name and image is present of a specific user
   return (
     <>
       <div className=" mt-[60px]">

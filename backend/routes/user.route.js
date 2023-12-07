@@ -5,6 +5,7 @@ const isAuthenticate = require("../middlewares/auth.middleware");
 const multer = require('multer');
 const path = require('path');
 
+// to get the uploaded image saved in uploads folder with an unique name
 const storage = multer.diskStorage({
     destination:function(req,file,cb){
         cb(null,'./uploads')
@@ -21,6 +22,7 @@ const upload = multer({
 router.post(
   "/upload-image",
   isAuthenticate.verifyToken,
+  // for uploading a single file
   upload.single("myImage"),
   userController.uploadImage
 );
