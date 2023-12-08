@@ -1,11 +1,7 @@
+/* eslint-disable no-undef */
 const cloudinary = require('cloudinary').v2;
 const config = require('../config/config')
 
-const options = {
-    overwrite :true,
-    invalidate : true,
-    resource_type :'auto',
-}
 
 // configuration of cloudinary account in the server
 cloudinary.config({ 
@@ -25,7 +21,6 @@ const uploadImageCloudinary = async(path)=>{
             return result.secure_url;
         }
         else{
-            console.log(error.message);
             return {message : error.message};
         }
 }

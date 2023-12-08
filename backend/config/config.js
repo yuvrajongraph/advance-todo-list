@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const dotenv = require("dotenv");
 
 // Configure the env file according to node environment

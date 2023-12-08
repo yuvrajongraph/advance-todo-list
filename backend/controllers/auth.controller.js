@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
@@ -53,7 +54,7 @@ const userSignUp = asyncHandler(async (req, res) => {
 
     const user = new User(body);
     const data = await user.save();
-    console.log(data);
+
     // create the token for sign up verification
     const token = jwt.sign(
       { email: data.email, id: data._id },
@@ -498,11 +499,12 @@ const deleteGoogleCalendarEvent = asyncHandler(async(req,res)=>{
       eventId: req.params.id,
       auth: oauth2Client,
     },
-    (err, response) => {
+    (err) => {
       if (err) {
         console.error("Error deleting event:", err);
         return;
       }
+      // eslint-disable-next-line no-console
       console.log("Event deleted:");
     }
   );
@@ -552,11 +554,12 @@ const updateGoogleCalendarEvent = asyncHandler(async(req,res)=>{
         },
       },
     },
-    (err, response) => {
+    (err) => {
       if (err) {
         console.error("Error updating event:", err);
         return;
       }
+      // eslint-disable-next-line no-console
       console.log("Event updated:");
     }
   );

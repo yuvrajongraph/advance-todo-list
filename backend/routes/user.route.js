@@ -3,7 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/user.controller");
 const isAuthenticate = require("../middlewares/auth.middleware");
 const multer = require('multer');
-const path = require('path');
+
 
 // to get the uploaded image saved in uploads folder with an unique name
 const storage = multer.diskStorage({

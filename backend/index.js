@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable no-undef */
 const app = require("./app");
 const config = require("./config/config");
 const notifier = require("node-notifier");
@@ -19,21 +21,21 @@ const startServer = async function () {
         credentials: true,
       },
     });
-    io.on("connection", (socket) => {
+    io.on("connection", () => {
       console.log("A client connected");
     });
     server.listen(config.SERVER_PORT);
     console.log(`--- Server started on ${config.SERVER_PORT} ---\n\n`);
 
     // create a schedular to the time of the events made on the calendar
-    const job = schedule.scheduleJob("*/1 * * * * *", async function () {
+    schedule.scheduleJob("*/1 * * * * *", async function () {
       const todos = await Todo.find({});
       const appointments = await Appointment.find({});
       const currentDateTime = new Date();
       currentDateTime.setMilliseconds(0);
 
       todos.map((val) => {
-       if (
+        if (
           new Date(val.dateTime).toISOString() === currentDateTime.toISOString()
         ) {
           // for system notification
@@ -64,6 +66,7 @@ const startServer = async function () {
     };
 
     const unexpectedErrorHandler = (error) => {
+      // eslint-disable-next-line no-console
       console.log(`Server Error: ${error.message}`);
       exitHandler();
     };
@@ -71,10 +74,11 @@ const startServer = async function () {
     process.on("uncaughtException", unexpectedErrorHandler);
     process.on("unhandledRejection", unexpectedErrorHandler);
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.log("server setup failed", err);
+    // eslint-disable-next-line no-console
     console.log("Error: ", err.message);
   }
 };
 
 startServer();
-

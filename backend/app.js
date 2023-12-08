@@ -9,7 +9,6 @@ const { commonErrorHandler } = require("./helper/errorHandler.helper");
 const cookieParser = require("cookie-parser");
 const passport = require('passport');
 const session = require('express-session')
-const isAuthenticate = require('./middlewares/auth.middleware')
 // const authController = require('./controllers/auth.controller')
 
 

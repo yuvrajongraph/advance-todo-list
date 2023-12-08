@@ -1,7 +1,7 @@
 const { commonErrorHandler } = require("../helper/errorHandler.helper");
 const { asyncHandler } = require("../middlewares/asyncHandler.middleware");
 const User = require("../models/user.model");
-const fs = require("fs");
+
 const uploadImageCloudinary = require("../utils/uploadImageCloudinary");
 
 // @desc    Upload a profile image
@@ -9,12 +9,12 @@ const uploadImageCloudinary = require("../utils/uploadImageCloudinary");
 // @access  Private
 
 const uploadImage = asyncHandler(async (req, res) => {
-  const file = req.file;
 
   const link = await uploadImageCloudinary(
+    // eslint-disable-next-line no-undef
     __dirname + `/../uploads/${req.file.filename}`
   );
-  const updatedUser = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
     { _id: req.user._id },
     { $set: { url: link } },
     { new: true }

@@ -1,6 +1,4 @@
-import { useContext, useEffect, useState, Suspense, lazy } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import {  useEffect,  Suspense, lazy } from "react";
 import "./App.css";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
@@ -47,6 +45,7 @@ function App() {
 
     // for connecting the socket to server
     socket.on("connect", () => {
+      // eslint-disable-next-line no-console
       console.log("Connected to server");
     });
 

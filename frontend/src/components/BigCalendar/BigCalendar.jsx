@@ -4,7 +4,6 @@ import moment from "moment";
 import { useGetAllTodoItemsMutation } from "../../redux/todo/todoApi";
 import { useGetAllAppointmentsQuery } from "../../redux/appointment/appointmentApi";
 import {
-  formatDateToYYYYMMDD,
   formatDateToYYYYMMDDTHHMM,
 } from "../../utils/dateConversion";
 import CustomModal from "../CustomModal/CustomModal";
@@ -25,23 +24,16 @@ const BigCalendar = () => {
   const [date, setDate] = useState(new Date());
   const calendarEvent = useContext(EventContext);
   const { selectedEvent, setSelectedEvent } = calendarEvent;
-  const { dark, toggleTheme } = useContext(DarkThemeContext);
+  const { dark } = useContext(DarkThemeContext);
   const [showTodo, setShowTodo] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [isEventOpen, setIsEventOpen] = useState(false);
-  const [checkReload, setCheckReload] = useState(0);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
   const [getAllTodoItems] = useGetAllTodoItemsMutation();
   const getAllAppointments = useGetAllAppointmentsQuery();
-  const { contactName, setContactName } = useContext(ContactContext);
+  const { contactName } = useContext(ContactContext);
   const contactTitle = contactName !== "" ? `${contactName}'s birthday` : "";
-  const todoSchema = {
-    title: "",
-    status: "",
-    category: "",
-    dateTime: "",
-    description: "",
-  };
+
 
   const todos = [];
   const appointments = [];
@@ -158,7 +150,6 @@ const BigCalendar = () => {
         new Date()
       );
 
-      const originalDate = new Date(date2IST);
       const newDate = new Date(
         new Date(
           event.end.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
@@ -189,7 +180,7 @@ const BigCalendar = () => {
     getAppointmentEvents();
   }, []);
 
-  const eventStyleGetter = (event, start, end, isSelected) => {
+  const eventStyleGetter = (event) => {
     // for conditional functioning of the calendar when the time matched (alarming the events) and time got expire
     if (event.customProp === "complete") {
       return {
@@ -246,7 +237,7 @@ const BigCalendar = () => {
   `;
 
   // to prevent the default navigation to the today page of calendar whenever click to event and empty slot of calendar
-  const handleNavigate = (newDate, view, action) => {
+  const handleNavigate = (newDate) => {
     setDate(newDate);
   };
 

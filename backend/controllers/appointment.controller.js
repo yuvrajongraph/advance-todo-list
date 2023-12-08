@@ -51,6 +51,7 @@ const getAllAppointments = asyncHandler(async (req, res) => {
     const query = {};
 
     for (const key in req.query) {
+      // eslint-disable-next-line no-prototype-builtins
       if (req.query.hasOwnProperty(key)) {
         query[key] = req.query[key];
       }
