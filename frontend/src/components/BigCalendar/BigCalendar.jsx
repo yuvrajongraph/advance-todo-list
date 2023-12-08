@@ -1,21 +1,24 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, lazy, Suspense } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import { useGetAllTodoItemsMutation } from "../../redux/todo/todoApi";
-import {  useGetAllAppointmentsQuery } from "../../redux/appointment/appointmentApi";
+import { useGetAllAppointmentsQuery } from "../../redux/appointment/appointmentApi";
 import {
   formatDateToYYYYMMDD,
   formatDateToYYYYMMDDTHHMM,
 } from "../../utils/dateConversion";
 import CustomModal from "../CustomModal/CustomModal";
-import EventCard from "../EventCard/EventCard";
+//import EventCard from "../EventCard/EventCard";
 import EventContext from "../../Context/Event/EventContext";
 import { compareIst } from "../../utils/compareIst";
 import { styled } from "@mui/material";
 import DarkThemeContext from "../../Context/DarkTheme/DarkThemeContext";
 import { toast } from "react-toastify";
 import ContactContext from "../../Context/Contact/ContactContext";
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorFallback from "../ErrorFallback/ErrorFallback";
 const localizer = momentLocalizer(moment);
+const EventCard = lazy(() => import("../EventCard/EventCard"));
 
 const BigCalendar = () => {
   const [events, setEvents] = useState([]);
@@ -28,10 +31,10 @@ const BigCalendar = () => {
   const [isEventOpen, setIsEventOpen] = useState(false);
   const [checkReload, setCheckReload] = useState(0);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-  const [getAllTodoItems] =useGetAllTodoItemsMutation();
+  const [getAllTodoItems] = useGetAllTodoItemsMutation();
   const getAllAppointments = useGetAllAppointmentsQuery();
-  const {contactName, setContactName} = useContext(ContactContext);
-  const contactTitle = contactName !== ''? `${contactName}'s birthday`:'';
+  const { contactName, setContactName } = useContext(ContactContext);
+  const contactTitle = contactName !== "" ? `${contactName}'s birthday` : "";
   const todoSchema = {
     title: "",
     status: "",
@@ -46,9 +49,9 @@ const BigCalendar = () => {
     title: contactTitle,
     category: "",
     dateTime: "",
-    description:"",
-    startTime:"",
-    endTime:""
+    description: "",
+    startTime: "",
+    endTime: "",
   });
 
   // for calculating where the pop up appears on the calendar
@@ -81,7 +84,7 @@ const BigCalendar = () => {
       setIsOpen(!isOpen);
       return { start, end };
     });
-  
+
     const dateTime = formatDateToYYYYMMDDTHHMM(new Date(start));
     const startTime = formatDateToYYYYMMDDTHHMM(new Date(start));
     const endTime = formatDateToYYYYMMDDTHHMM(new Date(end));
@@ -99,23 +102,22 @@ const BigCalendar = () => {
     setSelectedEvent(() => {
       return event;
     });
-    
 
     setIsEventOpen(!isEventOpen);
   };
 
- // for getting all the todo events on the calendar when intial renders
+  // for getting all the todo events on the calendar when intial renders
   const getTodoEvents = async () => {
     const response = await getAllTodoItems();
-    
-    const eventArray =  response?.data?.data?.map((item) => {
+
+    const eventArray = response?.data?.data?.map((item) => {
       const event = {
         start: moment(new Date(item?.dateTime)).toDate(),
         end: moment(new Date(item?.dateTime)).toDate(),
         title: item.title,
         id: item._id,
         category: item.category,
-      }; 
+      };
       const { date1IST, date2IST } = compareIst(
         new Date(event.start),
         new Date()
@@ -123,7 +125,7 @@ const BigCalendar = () => {
 
       const originalDate = new Date(date1IST);
       const newDate = new Date(originalDate.getTime() + 2 * 60 * 1000);
-        const diffTime = newDate-date2IST > 0 ? newDate-date2IST: 0;
+      const diffTime = newDate - date2IST > 0 ? newDate - date2IST : 0;
       if (date1IST <= date2IST && date2IST < newDate) {
         toast.success("alarm for reminder");
         event.customProp = "important";
@@ -137,11 +139,10 @@ const BigCalendar = () => {
       }
       return event;
     });
-  
-    
+
     todos.push(eventArray);
   };
-  
+
   // for getting all the appointment events on the calendar when intial renders
   const getAppointmentEvents = async () => {
     const response = await getAllAppointments.refetch();
@@ -151,20 +152,22 @@ const BigCalendar = () => {
         end: moment(new Date(item?.endTime)).toDate(),
         title: item.title,
         id: item._id,
-      }; 
+      };
       const { date1IST, date2IST } = compareIst(
         new Date(event.start),
         new Date()
       );
 
       const originalDate = new Date(date2IST);
-      const newDate = new Date(new Date(
-        event.end.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-      ));
+      const newDate = new Date(
+        new Date(
+          event.end.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+        )
+      );
       if (date1IST <= date2IST && date2IST < newDate) {
         toast.success("alarm for reminder");
         event.customProp = "important";
-        const diffTime = newDate-date2IST > 0 ? newDate-date2IST: 0;
+        const diffTime = newDate - date2IST > 0 ? newDate - date2IST : 0;
         setTimeout(() => {
           window.location.reload();
         }, diffTime);
@@ -176,18 +179,17 @@ const BigCalendar = () => {
       return event;
     });
     appointments.push(eventArray);
-    setEvents(()=>{
-      return todos[0].concat(appointments[0])
+    setEvents(() => {
+      return todos[0].concat(appointments[0]);
     });
-  }; 
+  };
 
   useEffect(() => {
     getTodoEvents();
     getAppointmentEvents();
   }, []);
-  
-  const eventStyleGetter = (event, start, end, isSelected) => {
 
+  const eventStyleGetter = (event, start, end, isSelected) => {
     // for conditional functioning of the calendar when the time matched (alarming the events) and time got expire
     if (event.customProp === "complete") {
       return {
@@ -215,7 +217,7 @@ const BigCalendar = () => {
 
   // style the calendar in dark mode
   const StyledCalendar = styled(Calendar)`
-  .rbc-day-bg,
+    .rbc-day-bg,
     .rbc-time-slot,
     .rbc-header {
       background-color: #282828;
@@ -242,11 +244,11 @@ const BigCalendar = () => {
       background-color: #3174ad;
     }
   `;
-  
+
   // to prevent the default navigation to the today page of calendar whenever click to event and empty slot of calendar
   const handleNavigate = (newDate, view, action) => {
     setDate(newDate);
-}
+  };
 
   return (
     <>
@@ -293,6 +295,8 @@ const BigCalendar = () => {
           setPopupPosition={setPopupPosition}
         />
         {selectedEvent && (
+          <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => {}}>
+          <Suspense fallback={<div>Loading.....</div>}>
           <EventCard
             selectedEvent={selectedEvent}
             setSelectedEvent={setSelectedEvent}
@@ -301,6 +305,8 @@ const BigCalendar = () => {
             isEventOpen={isEventOpen}
             setIsEventOpen={setIsEventOpen}
           />
+          </Suspense>
+          </ErrorBoundary>
         )}
       </div>
     </>
