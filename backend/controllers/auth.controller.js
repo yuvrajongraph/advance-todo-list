@@ -98,6 +98,10 @@ const userSignUpVerification = asyncHandler(async (req, res) => {
   // verify the token is correct or not for registration
   const tokenDecoded = jwt.verify(req.query.token, config.JWT_SECRET);
 
+  if (!tokenDecoded) {
+    return commonErrorHandler(req, res, null, 404, "Token is incorrect");
+  }
+
   // make a dummy object equal to decoded token
   const objToCheck = tokenDecoded;
 
@@ -120,19 +124,16 @@ const userSignUpVerification = asyncHandler(async (req, res) => {
   // add the decoded token in the set
   tokenSet.add(tokenDecoded);
 
-  if (!tokenDecoded) {
-    return commonErrorHandler(req, res, null, 404, "Token is incorrect");
-  }
-
-  // access the user data with the help of decoded token
-  const data = await User.findOne({ _id: tokenDecoded.id });
-
-  // update the field isRegister in user DB
+ 
+ // update the field isRegister in user DB
   await User.findOneAndUpdate(
     { _id: tokenDecoded.id },
     { $set: { isRegister: true } }
   );
 
+  // access the user data with the help of decoded token
+  const data = await User.findOne({ _id: tokenDecoded.id });
+    
   // final response
   return commonErrorHandler(
     req,
@@ -149,7 +150,7 @@ const userSignUpVerification = asyncHandler(async (req, res) => {
 const userSignIn = asyncHandler(async (req, res) => {
   const body = req.body;
   const userWithEmail = await User.findOne({ email: body.email });
-
+ 
   // if user email id is incorrect
   if (!userWithEmail) {
     return commonErrorHandler(
