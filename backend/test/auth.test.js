@@ -249,6 +249,84 @@ describe("user reset password email test cases", () => {
         expect(response.statusCode).toBe(202);
         expect(response.body.message).toBe("User password change successfully");
       });
+
+      it("tests api/auth/reset-password empty oldPassword", async () => {
+        const payload4 = {
+            oldPassword: '',
+            newPassword: faker.internet.password(10)
+        }
+        const response = await request(app).post(`/api/auth/reset-password?token=${resetPasswordToken}`).set("Authorization", "Bearer " + bearerToken).send(payload4);
+        expect(response.statusCode).toBe(422);
+        expect(response.body.error).toBe("\"oldPassword\" is not allowed to be empty");
+      });
+
+      it("tests api/auth/reset-password without oldPassword", async () => {
+        const payload5 = {
+            newPassword: faker.internet.password(10)
+        }
+        const response = await request(app).post(`/api/auth/reset-password?token=${resetPasswordToken}`).set("Authorization", "Bearer " + bearerToken).send(payload5);
+        expect(response.statusCode).toBe(422);
+        expect(response.body.error).toBe("\"oldPassword\" is required");
+      });
+
+      it("tests api/auth/reset-password oldPassword must contain at least 3 characters", async () => {
+        const payload6 = {
+            oldPassword: '11',
+            newPassword: faker.internet.password(10)
+        }
+        const response = await request(app).post(`/api/auth/reset-password?token=${resetPasswordToken}`).set("Authorization", "Bearer " + bearerToken).send(payload6);
+        expect(response.statusCode).toBe(422);
+        expect(response.body.error).toBe("\"oldPassword\" length must be at least 3 characters long");
+      });
+
+      it("tests api/auth/reset-password empty newPassword", async () => {
+        const payload7 = {
+            oldPassword: plainUserPassword,
+            newPassword: ''
+        }
+        const response = await request(app).post(`/api/auth/reset-password?token=${resetPasswordToken}`).set("Authorization", "Bearer " + bearerToken).send(payload7);
+        expect(response.statusCode).toBe(422);
+        expect(response.body.error).toBe("\"newPassword\" is not allowed to be empty");
+      });
+
+      it("tests api/auth/reset-password without newPassword", async () => {
+        const payload8 = {
+            oldPassword: plainUserPassword
+        }
+        const response = await request(app).post(`/api/auth/reset-password?token=${resetPasswordToken}`).set("Authorization", "Bearer " + bearerToken).send(payload8);
+        expect(response.statusCode).toBe(422);
+        expect(response.body.error).toBe("\"newPassword\" is required");
+      });
+
+      it("tests api/auth/reset-password newPassword must contain at least 3 characters", async () => {
+        const payload9 = {
+            oldPassword: plainUserPassword,
+            newPassword: '11'
+        }
+        const response = await request(app).post(`/api/auth/reset-password?token=${resetPasswordToken}`).set("Authorization", "Bearer " + bearerToken).send(payload9);
+        expect(response.statusCode).toBe(422);
+        expect(response.body.error).toBe("\"newPassword\" length must be at least 3 characters long");
+      });
+
+      it("tests api/auth/reset-password oldPassword must contain at most 30 characters", async () => {
+        const payload10 = {
+            oldPassword: faker.internet.password(31),
+            newPassword: faker.internet.password(10)
+        }
+        const response = await request(app).post(`/api/auth/reset-password?token=${resetPasswordToken}`).set("Authorization", "Bearer " + bearerToken).send(payload10);
+        expect(response.statusCode).toBe(422);
+        expect(response.body.error).toBe("\"oldPassword\" length must be less than or equal to 30 characters long");
+      });
+
+      it("tests api/auth/reset-password newPassword must contain at most 30 characters", async () => {
+        const payload11 = {
+            oldPassword: plainUserPassword,
+            newPassword: faker.internet.password(31)
+        }
+        const response = await request(app).post(`/api/auth/reset-password?token=${resetPasswordToken}`).set("Authorization", "Bearer " + bearerToken).send(payload11);
+        expect(response.statusCode).toBe(422);
+        expect(response.body.error).toBe("\"newPassword\" length must be less than or equal to 30 characters long");
+      });
    
  });
 

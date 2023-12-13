@@ -53,8 +53,8 @@ const getAllTodoItems = asyncHandler(async (req, res) => {
     }
 
     // filter the data according to dynamic field given in request query
-    const data = await Todo.find({$and:[query,{userId:req.user._id}]});
-
+    const data = await Todo.find({userId:req.user._id});
+   
     //final response
     return commonErrorHandler(req, res, { data, quote: "OK" }, 200);
 });
@@ -68,7 +68,7 @@ const getSingleTodoItem = asyncHandler(async (req, res) => {
     const params = req.params;
 
     // find the todo item in DB with the help of param id
-    const data = await Todo.find({$and:[ {_id: params.id},{userId:req.user._id}],  });
+    const data = await Todo.findOne({$and:[ {_id: params.id},{userId:req.user._id}],  });
 
     // final response
     return commonErrorHandler(req, res, { data, quote: "OK" }, 200);
