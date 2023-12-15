@@ -33,10 +33,10 @@ const BigCalendar = () => {
   const getAllAppointments = useGetAllAppointmentsQuery();
   const { contactName } = useContext(ContactContext);
   const contactTitle = contactName !== "" ? `${contactName}'s birthday` : "";
+  const [todoArray,setTodoArray] = useState([]);
 
-
-  const todos = [];
-  const appointments = [];
+  let todos = [];
+  let appointments = [];
   const [input, setInput] = useState({
     title: contactTitle,
     category: "",
@@ -131,8 +131,10 @@ const BigCalendar = () => {
       }
       return event;
     });
-
+   
     todos.push(eventArray);
+    setTodoArray(todos[0])
+   
   };
 
   // for getting all the appointment events on the calendar when intial renders
@@ -169,16 +171,30 @@ const BigCalendar = () => {
       }
       return event;
     });
-    appointments.push(eventArray);
+    
+    appointments.push(eventArray) 
+    
     setEvents(() => {
-      return todos[0].concat(appointments[0]);
+      //console.log(todoArray);
+      if(todoArray.length > 0 && appointments[0].length > 0){
+        return  todoArray.concat(appointments[0])
+      }else if( todoArray.length > 0){
+        return  todoArray;
+      }else if(appointments[0].length > 0){
+        return appointments[0];
+      }else{
+        return [];
+      }
     });
   };
 
   useEffect(() => {
     getTodoEvents();
-    getAppointmentEvents();
   }, []);
+
+  useEffect(() => {
+    getAppointmentEvents();
+  }, [todoArray]);
 
   const eventStyleGetter = (event) => {
     // for conditional functioning of the calendar when the time matched (alarming the events) and time got expire

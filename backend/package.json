@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "set NODE_ENV=development &&  nodemon index.js ",
+    "start": "set NODE_ENV=development &&  node index.js",
+    "server": "set NODE_ENV=development &&  nodemon index.js ",
     "test": "set NODE_ENV=test &&  jest --testTimeout=10000",
     "lint": "npx eslint ."
   },
