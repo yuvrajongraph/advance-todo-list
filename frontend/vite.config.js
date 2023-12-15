@@ -7,6 +7,9 @@ export default defineConfig({
   server: {
     open: '/auth/register', 
   },
+  optimizeDeps: {
+    exclude: ['axios']
+  },
   build: {
     rollupOptions: {
       output: {

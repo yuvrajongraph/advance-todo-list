@@ -19,10 +19,6 @@ const todoSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  type: {
-    type: String,
-    trim: true,
-  },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 

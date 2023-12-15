@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
@@ -11,10 +12,19 @@ const { sendMail } = require("../utils/sendMail.utils");
 const ejs = require("ejs");
 const fs = require("fs");
 const path = require("path");
+const {google} = require("googleapis");
+const dayjs = require("dayjs");
 // const UniqueStringGenerator = require("unique-string-generator");
 const tokenSet = new Set();
 // const randomToken = UniqueStringGenerator.UniqueString();
 // let Token ;
+
+
+const oauth2Client = new google.auth.OAuth2(
+  config.GOOGLE_CONTACT_CLIENT_ID,
+  config.GOOGLE_CONTACT_CLIENT_SECRET,
+  config.GOOGLE_REDIRECT_URI
+);
 
 // @desc    Signup user
 // @route   POST /api/auth/signup
@@ -41,10 +51,10 @@ const userSignUp = asyncHandler(async (req, res) => {
     );
   } else {
     // create user schema and save in database
-   
+
     const user = new User(body);
     const data = await user.save();
-    console.log(data)
+
     // create the token for sign up verification
     const token = jwt.sign(
       { email: data.email, id: data._id },
@@ -88,6 +98,10 @@ const userSignUpVerification = asyncHandler(async (req, res) => {
   // verify the token is correct or not for registration
   const tokenDecoded = jwt.verify(req.query.token, config.JWT_SECRET);
 
+  if (!tokenDecoded) {
+    return commonErrorHandler(req, res, null, 404, "Token is incorrect");
+  }
+
   // make a dummy object equal to decoded token
   const objToCheck = tokenDecoded;
 
@@ -110,19 +124,16 @@ const userSignUpVerification = asyncHandler(async (req, res) => {
   // add the decoded token in the set
   tokenSet.add(tokenDecoded);
 
-  if (!tokenDecoded) {
-    return commonErrorHandler(req, res, null, 404, "Token is incorrect");
-  }
-
-  // access the user data with the help of decoded token
-  const data = await User.findOne({ _id: tokenDecoded.id });
-
-  // update the field isRegister in user DB
+ 
+ // update the field isRegister in user DB
   await User.findOneAndUpdate(
     { _id: tokenDecoded.id },
     { $set: { isRegister: true } }
   );
 
+  // access the user data with the help of decoded token
+  const data = await User.findOne({ _id: tokenDecoded.id });
+    
   // final response
   return commonErrorHandler(
     req,
@@ -139,7 +150,7 @@ const userSignUpVerification = asyncHandler(async (req, res) => {
 const userSignIn = asyncHandler(async (req, res) => {
   const body = req.body;
   const userWithEmail = await User.findOne({ email: body.email });
-
+ 
   // if user email id is incorrect
   if (!userWithEmail) {
     return commonErrorHandler(
@@ -297,7 +308,7 @@ const userResetPassword = asyncHandler(async (req, res) => {
   // add the decoded token in the set
   tokenSet.add(tokenDecoded);
   const hashPassword = generateHashPassword(body.newPassword);
-  
+
   // update the field password in user DB with new password
   await User.findOneAndUpdate(
     { _id: tokenDecoded._id },
@@ -313,19 +324,252 @@ const userResetPassword = asyncHandler(async (req, res) => {
   );
 });
 
-const googleAuthSuccess = (req,res)=>{
-  console.log(req.user)
-   return commonErrorHandler(
+
+const googleAuth = asyncHandler(async(req,res)=>{
+  const authUrl = oauth2Client.generateAuthUrl({
+    access_type: "offline",
+    scope: [
+      "https://www.googleapis.com/auth/contacts.readonly",
+      "https://www.googleapis.com/auth/calendar",
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile",
+    ], // Scope for accessing contacts,calendar,email,profile
+  });
+  res.redirect(authUrl);
+})
+
+// Redirect to /google/callback api where we can exchange the authorization token to get refresh and access token
+const googleAuthRedirect = asyncHandler(async(req,res)=>{
+  const code = req.query.code;
+  const { tokens } = await oauth2Client.getToken(code);
+
+  // Set access token to authorize API requests
+  oauth2Client.setCredentials(tokens);
+
+  return res.redirect(
+    `${config.FRONTEND_URL}/google?oauth2Client=${JSON.stringify(oauth2Client)}`
+  );
+})
+
+
+const googleOauthUser = asyncHandler(async(req,res)=>{
+  // Manual syncing with google account
+  if (!oauth2Client.credentials.refresh_token) {
+    return commonErrorHandler(
+      req,
+      res,
+      null,
+      404,
+      "Please, Sync with the Google first to see your contacts"
+    );
+  }
+  const oauth2 = google.oauth2({ version: "v2", auth: oauth2Client });
+  // Retreive the profile from google
+  const userInfo = await oauth2.userinfo.get();
+  const body = userInfo.data;
+  const userWithEmail = await User.findOne({ email: body.email });
+
+  // in case if user already sign in with google
+  if (body?.email === userWithEmail?.email) {
+    const token = jwt.sign({ _id: userWithEmail._id }, config.JWT_SECRET);
+    return commonErrorHandler(
+      req,
+      res,
+      { data: {token:token, details: userWithEmail}, quote: "User sign in with google successfully" },
+      200
+    );
+    }else{
+  // Login with the google for first time 
+  // generate a random password so user cannot get login manually
+  body.password = jwt.sign({ password: body.password }, config.JWT_SECRET);
+  // save the user in database
+  const user = new User({name:body.name,email:body.email,password:body.password,isRegister:true,url:body.picture});
+  const data = await user.save();
+  const token = jwt.sign({ _id: data._id }, config.JWT_SECRET);
+  return commonErrorHandler(
     req,
     res,
-    { data: req.user.displayName, quote: "User login success by google" },
-    202
+    { data: {token:token, details:data}, quote: "User sign in with google successfully" },
+    200
   );
- 
-}
+  }
+})
 
-const googleAuthFailure = asyncHandler(async(req,res)=>{
-  return res.send("Fail authentication!!")
+const googleContacts = asyncHandler(async(req,res)=>{
+  // Manual syncing with google account
+  if (!oauth2Client.credentials.refresh_token) {
+    return commonErrorHandler(
+      req,
+      res,
+      null,
+      404,
+      "Please, Sync with the Google first to see your contacts"
+    );
+  }
+  const peopleApi = google.people({
+    version: "v1",
+    auth: oauth2Client,
+  });
+
+  try {
+    // Retrieve a list of contacts
+    const contacts = await peopleApi.people.connections.list({
+      resourceName: "people/me",
+      personFields: "names,emailAddresses", // Fields to retrieve (you can add more fields)
+    });
+
+    // Return contacts data
+    const contactList = contacts.data.connections.map((contact) => {
+      return contact.names[0].displayName;
+    });
+
+    return commonErrorHandler(req, res, { data: contactList, quote: "" }, 200);
+  } catch (error) {
+    console.error("Error fetching contacts:", error.message);
+    res.status(500).send("Error fetching contacts");
+  }
+})
+
+const calendar = google.calendar({
+  version: "v3",
+  auth: config.CALENDAR_API_KEY,
+});
+
+const createGoogleCalendarEvent = asyncHandler(async(req,res)=>{
+  // Manual syncing with google account
+  if (!oauth2Client.credentials.refresh_token) {
+    return commonErrorHandler(
+      req,
+      res,
+      null,
+      404,
+      "Please, Sync with the Google first to create your event in google calendar too"
+    );
+  }
+  const body = req.body;
+
+  // insert the same event from application in the google calendar with that google account that got sync
+  const createdEvent = await calendar.events.insert({
+    calendarId: "primary",
+    auth: oauth2Client,
+    requestBody: {
+      summary: body.title,
+      description: "It is a very important event",
+      start: {
+        dateTime: dayjs(new Date(body.startTime))
+          .add(5, "hours")
+          .add(30, "minutes")
+          .toISOString(),
+        timeZone: "Asia/Kolkata",
+      },
+      end: {
+        dateTime: dayjs(new Date(body.endTime))
+          .add(5, "hours")
+          .add(30, "minutes")
+          .toISOString(),
+        timeZone: "Asia/Kolkata",
+      },
+    },
+  });
+  return commonErrorHandler(
+    req,
+    res,
+    {
+      data: { id: createdEvent.data.id },
+      quote: "Event created in google calendar successfully",
+    },
+    200
+  );
+})
+
+const deleteGoogleCalendarEvent = asyncHandler(async(req,res)=>{
+  // Manual syncing with google account
+  if (!oauth2Client.credentials.refresh_token) {
+    return commonErrorHandler(
+      req,
+      res,
+      null,
+      404,
+      "Please, Sync with the Google first to create your event in google calendar too"
+    );
+  }
+  // delete the same event from application in the google calendar with that google account that got sync
+  calendar.events.delete(
+    {
+      calendarId: "primary",
+      eventId: req.params.id,
+      auth: oauth2Client,
+    },
+    (err) => {
+      if (err) {
+        console.error("Error deleting event:", err);
+        return;
+      }
+      // eslint-disable-next-line no-console
+      console.log("Event deleted:");
+    }
+  );
+  return commonErrorHandler(
+    req,
+    res,
+    { data: {}, quote: "Event deleted in google calendar successfully" },
+    200
+  );
+})
+
+const updateGoogleCalendarEvent = asyncHandler(async(req,res)=>{
+  // Manual syncing with google account
+  if (!oauth2Client.credentials.refresh_token) {
+    return commonErrorHandler(
+      req,
+      res,
+      null,
+      404,
+      "Please, Sync with the Google first to create your event in google calendar too"
+    );
+  }
+  const body = req.body;
+
+   // update the same event from application in the google calendar with that google account that got sync
+  calendar.events.update(
+    {
+      calendarId: "primary",
+      eventId: req.params.id,
+      auth: oauth2Client,
+      requestBody: {
+        summary: body.title,
+        description: "It is a very important event",
+        start: {
+          dateTime: dayjs(new Date(body.startTime))
+            .add(5, "hours")
+            .add(30, "minutes")
+            .toISOString(),
+          timeZone: "Asia/Kolkata",
+        },
+        end: {
+          dateTime: dayjs(new Date(body.endTime))
+            .add(5, "hours")
+            .add(30, "minutes")
+            .toISOString(),
+          timeZone: "Asia/Kolkata",
+        },
+      },
+    },
+    (err) => {
+      if (err) {
+        console.error("Error updating event:", err);
+        return;
+      }
+      // eslint-disable-next-line no-console
+      console.log("Event updated:");
+    }
+  );
+  return commonErrorHandler(
+    req,
+    res,
+    { data: {}, quote: "Event updated in google calendar successfully" },
+    200
+  );
 })
 
 module.exports = {
@@ -335,6 +579,11 @@ module.exports = {
   userSignUpVerification,
   userResetPassword,
   userResetPasswordMail,
-  googleAuthSuccess,
-  googleAuthFailure
+  googleAuth,
+  googleAuthRedirect,
+  googleOauthUser,
+  googleContacts,
+  createGoogleCalendarEvent,
+  deleteGoogleCalendarEvent,
+  updateGoogleCalendarEvent
 };

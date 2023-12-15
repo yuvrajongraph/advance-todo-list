@@ -9,7 +9,6 @@ const { commonErrorHandler } = require("./helper/errorHandler.helper");
 const cookieParser = require("cookie-parser");
 const passport = require('passport');
 const session = require('express-session')
-const isAuthenticate = require('./middlewares/auth.middleware')
 // const authController = require('./controllers/auth.controller')
 
 
@@ -37,7 +36,7 @@ app.use(cookieParser());
 // Enable cors support to accept cross origin requests
 app.use(
   cors({
-    origin: config.FRONTEND_URL,
+    origin: '*',
     credentials: true,
     optionsSuccessStatus: 200,
   })
@@ -51,6 +50,10 @@ app.use(compression());
 
 // Disble x-powered-by header to hide server side technology
 app.disable("x-powered-by");
+
+app.use(express.urlencoded({extended:true}))
+
+// app.use(express.static('./uploads'));
 
 //  Server connect with MongoDB using mongoose
 mongoose.connect(config.DB_URL, {

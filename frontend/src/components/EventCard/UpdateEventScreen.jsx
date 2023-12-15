@@ -1,13 +1,14 @@
 import React, { useState, useContext } from "react";
 import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import {
   formatDateToYYYYMMDDTHHMM,
-  formatDateToYYYYMMDD,
 } from "../../utils/dateConversion";
 import EventContext from "../../Context/Event/EventContext";
 import { useUpdateTodoItemMutation } from "../../redux/todo/todoApi";
 import { useUpdateAppointmentMutation } from "../../redux/appointment/appointmentApi";
+import { useUpdateGoogleCalendarEventMutation } from "../../redux/auth/authApi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
@@ -17,15 +18,21 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import DarkThemeContext from "../../Context/DarkTheme/DarkThemeContext";
 import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import "./UpdateEventScreen.css";
+import { updateSingleTodoItem } from "../../redux/todo/todoSlice";
 
 const UpdateEventScreen = () => {
   const calendarEvent = useContext(EventContext);
   const { type } = useParams();
   const { selectedEvent, setSelectedEvent } = calendarEvent;
+  const options = ["normal", "food", "other"];
   const [updateTodoItem] = useUpdateTodoItemMutation();
   const [updateAppointment] = useUpdateAppointmentMutation();
+  const [updateGoogleCalendarEvent] = useUpdateGoogleCalendarEventMutation();
   const { dark, toggleTheme } = useContext(DarkThemeContext);
+  const [selectedOption, setSelectedOption] = useState(selectedEvent.category);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [input, setInput] = useState({
     title: selectedEvent.title,
@@ -34,6 +41,7 @@ const UpdateEventScreen = () => {
     startTime: formatDateToYYYYMMDDTHHMM(new Date(selectedEvent.start)),
     endTime: formatDateToYYYYMMDDTHHMM(new Date(selectedEvent.end)),
   });
+  // style the update the eventy screen in dark theme
   const styleTextField = dark
     ? {
         "label.Mui-focused": {
@@ -78,14 +86,18 @@ const UpdateEventScreen = () => {
     });
   };
 
+  const handleChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+  // update the event in DB through frontend
   const confirmUpdateEvent = async (e) => {
-    const response = selectedEvent.endTime
+    const response = selectedEvent.category
       ? await updateTodoItem({
           id: selectedEvent.id,
           title,
-          type: selectedEvent.type,
           status: "open",
-          category,
+          category: selectedOption,
           dateTime: input.dateTime,
         })
       : await updateAppointment({
@@ -96,6 +108,19 @@ const UpdateEventScreen = () => {
           endTime: input.endTime,
         });
     if (response.data) {
+      // retrive the value from map of a particular event id of calendar used in app
+      const map = new Map(JSON.parse(localStorage.getItem("map")));
+      const googleCalendarEventId = map.get(selectedEvent?.id);
+      const start = input.category? input.dateTime:input.startTime;
+      const end = input.category? input.dateTime:input.endTime;
+       // update the event in google calendar as well 
+      const calendarResponse = await updateGoogleCalendarEvent({id:googleCalendarEventId,title,startTime:start,endTime:end});
+      if(calendarResponse.data){
+        toast.success(calendarResponse?.data?.message);
+      }else{
+        toast.error(calendarResponse?.error?.data?.error);
+      }
+      dispatch(updateSingleTodoItem({id:selectedEvent.id, data:response.data.data}))
       toast.success(response?.data?.message);
     } else {
       toast.error(response?.error?.data?.error);
@@ -103,7 +128,7 @@ const UpdateEventScreen = () => {
     setTimeout(() => {
       navigate("/");
       window.location.reload();
-    }, 2000);
+    }, 1000);
   };
   return (
     <>
@@ -127,6 +152,7 @@ const UpdateEventScreen = () => {
           />
 
           <TextField
+            select
             label="Category"
             variant="outlined"
             fullWidth
@@ -134,9 +160,14 @@ const UpdateEventScreen = () => {
             id="category"
             size="small"
             sx={styleTextField}
-            value={category}
-            onChange={handleInputEvent}
-          />
+            value={selectedOption}
+            onChange={handleChange}
+            className="text-left"
+          >
+            <MenuItem value="normal">{options[0]}</MenuItem>
+            <MenuItem value="food">{options[1]}</MenuItem>
+            <MenuItem value="other">{options[2]}</MenuItem>
+          </TextField>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={["DateTimePicker"]}>

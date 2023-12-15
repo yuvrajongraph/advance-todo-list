@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
+  url: {
+    type: String,
+    default:""
+  },
   isRegister: {
     type: Boolean,
     default: false,

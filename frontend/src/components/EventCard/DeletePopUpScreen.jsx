@@ -4,6 +4,9 @@ import Modal from "@mui/material/Modal";
 import { useDeleteTodoItemMutation } from "../../redux/todo/todoApi";
 import { useDeleteAppointmentMutation } from "../../redux/appointment/appointmentApi";
 import { toast } from "react-toastify";
+import { useDeleteGoogleCalendarEventMutation } from "../../redux/auth/authApi";
+import { useDispatch } from "react-redux";
+import { removeSingleTodoItem } from "../../redux/todo/todoSlice";
 
 
 
@@ -14,17 +17,35 @@ const DeletePopUpScreen = ({
   selectedEvent,
   setSelectedEvent,
 }) => {
+  const dispatch = useDispatch()
   const [deleteTodoItem] = useDeleteTodoItemMutation();
   const [deleteAppointment] = useDeleteAppointmentMutation();
+  const [deleteGoogleCalendarEvent] = useDeleteGoogleCalendarEventMutation();
+
+  // close the popup for the confirming delete part
   const handleClose = () => {
     setDeletePopUp(false);
   };
-
+ 
+  // delete the events from the DB
   const confirmDeleteEvent = async (e) => {
     setDeletePopUp(false);
-    const response = selectedEvent.dateTime? await deleteTodoItem({ id: selectedEvent?.id }): await deleteAppointment({id:selectedEvent?.id});
+    const response = selectedEvent.category? await deleteTodoItem({ id: selectedEvent?.id }): await deleteAppointment({id:selectedEvent?.id});
     if (response.data) {
+      // retrive the value from map of a particular event id of calendar used in app
+      const map = new Map(JSON.parse(localStorage.getItem("map")));
+      const googleCalendarEventId = map.get(selectedEvent?.id);
+      const calendarResponse = await deleteGoogleCalendarEvent({id:googleCalendarEventId});
+      if(calendarResponse.data){
+        toast.success(calendarResponse?.data?.message);
+      }else{
+        toast.error(calendarResponse?.error?.data?.error);
+      }
+      dispatch(removeSingleTodoItem(selectedEvent.id))
       toast.success(response?.data?.message);
+      // delete the event key from map when the event got deleted by an user from localStorage 
+      map.delete(selectedEvent?.id)
+      localStorage.setItem("map", JSON.stringify(Array.from(map)));
     } else {
       toast.error(response?.error?.data?.error);
     }

@@ -51,6 +51,7 @@ const getAllAppointments = asyncHandler(async (req, res) => {
     const query = {};
 
     for (const key in req.query) {
+      // eslint-disable-next-line no-prototype-builtins
       if (req.query.hasOwnProperty(key)) {
         query[key] = req.query[key];
       }
@@ -72,7 +73,7 @@ const getSingleAppointment = asyncHandler(async (req, res) => {
     const params = req.params;
 
     // find the appointment in DB with the help of param id
-    const data = await Appointment.find({$and:[ {_id: params.id},{userId:req.user._id}],  });
+    const data = await Appointment.findOne({$and:[ {_id: params.id},{userId:req.user._id}],  });
 
     // final response
     return commonErrorHandler(req, res, { data, quote: "OK" }, 200);

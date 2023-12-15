@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 
 const ModalNavbar = ({ activeLink, setActiveLink }) => {
+  
+  // set the activeLink to todo and appointment according to what user choose while creating the event in the popup menu
+
   const handleNavClick = (link) => {
     setActiveLink(link);
   };

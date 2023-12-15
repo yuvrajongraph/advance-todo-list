@@ -5,20 +5,25 @@ import { useLoginUserMutation } from "../../redux/auth/authApi";
 import { toast } from "react-toastify";
 import { loginSuccess, loginFailure } from "../../redux/auth/authSlice";
 import "react-toastify/dist/ReactToastify.css";
-import { useCookies } from "react-cookie";
+import { useCookies, Cookies } from "react-cookie";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loginUser] = useLoginUserMutation();
+  const cookie = new Cookies();
   const [cookies, setCookie] = useCookies(["userData"]);
   const [input, setInput] = useState({
     email: "",
     password: "",
   });
 
+  // redirect to google oAuth consent screen
   const handleGoogleLogin = async (e) => {
     e.preventDefault();
+    if(JSON.parse(localStorage.getItem("isSync")) === null){
+      localStorage.setItem("isSync",false);
+    }
     window.open(`${import.meta.env.VITE_BACKEND_URL}/auth/google`, "_self");
    };
 
@@ -33,6 +38,7 @@ const Login = () => {
     });
   };
 
+  // use the login API in frontend using rtk query
   const handleLogin = async (e) => {
     e.preventDefault();
     const body = {
@@ -42,8 +48,9 @@ const Login = () => {
     const response = await loginUser(body);
     if (response?.data) {
       dispatch(loginSuccess(response?.data?.data));
+      cookie.remove("userData");
       setCookie("userData", JSON.stringify(response?.data?.data));
-
+      
       toast.success(response?.data?.message);
 
       setInput({

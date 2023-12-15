@@ -15,6 +15,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
   return result;
 };
 
+// create the mutation and query for fetching the authentication apis
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: baseQueryWithReauth,
@@ -66,11 +67,41 @@ export const authApi = createApi({
     }),
     googleAuth: builder.mutation({
       query: () => ({
-        url: "/auth/google/callback",
+        url: "/auth/google/oauthuser",
+        method: "GET",
+      }),
+    }),
+    googleCalendar: builder.mutation({
+      query: ({title, startTime, endTime}) => ({
+        url: "/auth/google/calendar/insert",
+        method: "POST",
+        body:{
+          title, startTime,endTime
+        }
+      }),
+    }),
+    deleteGoogleCalendarEvent: builder.mutation({
+      query: ({id}) => ({
+        url: `/auth/google/calendar/delete/${id}`,
+        method: "DELETE",
+      }),
+    }),
+    updateGoogleCalendarEvent: builder.mutation({
+      query: ({id,title,startTime,endTime}) => ({
+        url: `/auth/google/calendar/update/${id}`,
+        method: "PATCH",
+        body:{
+          title, startTime,endTime
+        }
+      }),
+    }),
+    googleContact: builder.mutation({
+      query: () => ({
+        url: "/auth/google/contacts",
         method: "GET",
       }),
     }),
   }),
 });
 
-export const { useLoginUserMutation, useRegisterUserMutation, useRegisterUserVerificationMutation, useResetPasswordMutation, useResetPasswordMailMutation, useGoogleAuthMutation, useLogoutUserMutation } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useRegisterUserVerificationMutation, useResetPasswordMutation, useResetPasswordMailMutation, useGoogleAuthMutation, useLogoutUserMutation, useGoogleContactMutation, useGoogleCalendarMutation, useDeleteGoogleCalendarEventMutation, useUpdateGoogleCalendarEventMutation } = authApi;

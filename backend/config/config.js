@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const dotenv = require("dotenv");
 
 // Configure the env file according to node environment
@@ -17,8 +18,15 @@ const config = {
   JWT_SECRET: process.env.JWT_SECRET,
   DB_URL: process.env.DB_URL,
   FRONTEND_URL: process.env.FRONTEND_URL,
-  GOOGLE_CLIENT_ID: process.env. GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET: process.env. GOOGLE_CLIENT_SECRET
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  GOOGLE_CONTACT_CLIENT_ID: process.env.GOOGLE_CONTACT_CLIENT_ID,
+  GOOGLE_CONTACT_CLIENT_SECRET: process.env.GOOGLE_CONTACT_CLIENT_SECRET,
+  CLOUD_NAME: process.env.CLOUD_NAME,
+  API_KEY: process.env.API_KEY,
+  API_SECRET: process.env.API_SECRET,
+  GOOGLE_REDIRECT_URI : process.env.GOOGLE_REDIRECT_URI,
+  CALENDAR_API_KEY: process.env.CALENDAR_API_KEY
 };
 
 module.exports = config;

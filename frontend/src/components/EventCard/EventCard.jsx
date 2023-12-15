@@ -35,19 +35,23 @@ const EventCard = ({
     setIsEventOpen(false);
   };
 
+  // handle to open the confirming the delete event pop up
   const deleteEvent = (e) => {
     e.preventDefault();
     setIsEventOpen(false);
     setDeletePopUp(true);
   };
 
+  // navigate to update the event screen
   const updateEvent = (e) => {
     e.preventDefault();
     setIsEventOpen(false);
-    navigate(`/update/${selectedEvent.type}`);
+    const type = selectedEvent.category ? 'todo':'appointment';
+    navigate(`/update/${type}`);
   };
 
   useEffect(() => {
+    // cut the information of event when time get passed
     const { date1IST, date2IST } = compareIst(
       new Date(selectedEvent.start),
       new Date()

@@ -15,27 +15,27 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
   return result;
 };
 
+// create the mutation and query for fetching the todo apis
 export const todoApi = createApi({
   reducerPath: "todoApi",
   tagTypes: ["todos"],
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     createTodoItem: builder.mutation({
-      query: ({ title, status, category, dateTime,type }) => ({
+      query: ({ title, status, category, dateTime }) => ({
         url: `/todo-list`,
         method: "POST",
         body: {
           title,
           status,
           category,
-          dateTime,
-          type
+          dateTime
         },
       }),
       invalidatesTags: ["todos"],
     }),
     updateTodoItem: builder.mutation({
-      query: ({ id, title, status, category, dateTime,type }) => ({
+      query: ({ id, title, status, category, dateTime }) => ({
         url: `/todo-list/${id}`,
         method: "PATCH",
         body: {
@@ -43,7 +43,6 @@ export const todoApi = createApi({
           status,
           category,
           dateTime,
-          type
         },
       }),
       invalidatesTags: ["todos"],
@@ -55,12 +54,12 @@ export const todoApi = createApi({
       }),
       providesTags: ["todos"],
     }),
-    getAllTodoItems: builder.query({
+    getAllTodoItems: builder.mutation({
       query: () => ({
         url: `/todo-list`,
         method: "GET",
       }),
-      providesTags: ["todos"],
+      
     }),
     deleteTodoItem: builder.mutation({
       query: ({ id }) => ({
@@ -76,6 +75,6 @@ export const {
   useCreateTodoItemMutation,
   useUpdateTodoItemMutation,
   useDeleteTodoItemMutation,
-  useGetAllTodoItemsQuery,
+  useGetAllTodoItemsMutation,
   useGetSingleTodoItemQuery,
 } = todoApi;

@@ -4,17 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "set NODE_ENV=development &&  nodemon index.js ",
-    "test": "set NODE_ENV=test && nodemon index.js"
+    "start": "set NODE_ENV=development &&  node index.js",
+    "server": "set NODE_ENV=development &&  nodemon index.js ",
+    "test": "set NODE_ENV=test &&  jest --testTimeout=10000",
+    "lint": "npx eslint ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "cloudinary": "^1.41.0",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
@@ -22,15 +26,24 @@
     "express-session": "^1.17.3",
     "googleapis": "^128.0.0",
     "helmet": "^7.0.0",
+    "http": "^0.0.1-security",
     "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.3",
+    "multer": "^1.4.5-lts.1",
     "node-notifier": "^10.0.1",
     "node-schedule": "^2.1.1",
     "nodemailer": "^6.9.6",
     "nodemon": "^3.0.1",
     "passport": "^0.6.0",
     "passport-google-oauth2": "^0.2.0",
+    "socket.io": "^4.7.2",
     "unique-string-generator": "^1.1.1"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.3.1",
+    "eslint": "^8.55.0",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
   }
 }

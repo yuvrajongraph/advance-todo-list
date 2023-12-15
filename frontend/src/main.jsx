@@ -10,6 +10,8 @@ import { PersistGate } from "redux-persist/integration/react";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import EventState from "./Context/Event/EventState.jsx";
 import DarkThemeState from "./Context/DarkTheme/DarkThemeState.jsx";
+import ContactState from "./Context/Contact/ContactState.jsx";
+import CalendarState from "./Context/Calendar/CalendarState.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -18,9 +20,13 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <PersistGate loading={null} persistor={persistor}>
           <EventState>
             <DarkThemeState>
+              <ContactState>
+                <CalendarState>
               <BrowserRouter>
                 <App />
               </BrowserRouter>
+              </CalendarState>
+              </ContactState>
             </DarkThemeState>
           </EventState>
         </PersistGate>

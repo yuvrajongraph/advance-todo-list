@@ -10,9 +10,10 @@ const todoSlice = createSlice({
         },
 
         removeSingleTodoItem : (state,action) =>{
-            state.filter((val)=>{
-                return val._id !== action.payload
+           const remainingItem = state.filter((val)=>{
+                return val?._id !== action.payload
             });
+            return remainingItem
         },
 
         removeTodoItems : (state,action) =>{
@@ -20,13 +21,13 @@ const todoSlice = createSlice({
         },
 
         updateSingleTodoItem : (state,action) =>{
-            const updatedItems = state.map((item) => {
-                if (item._id === action.payload.id) {
-                  return action.payload.data;
+           const updatedItems = state.map((item) => {
+                if (item?._id === action.payload?.id) {
+                  return {...item, title: action.payload.data?.title, category: action.payload.data?.category, dateTime: action.payload.data?.dateTime, startTime: action.payload.data?.startTime, endTime: action.payload.data?.endTime};
                 }
                 return item;
               });
-              return state = updatedItems;
+              return updatedItems;
         }
     }
 })

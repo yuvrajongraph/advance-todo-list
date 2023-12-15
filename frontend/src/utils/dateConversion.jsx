@@ -6,6 +6,7 @@ export const formatDateToYYYYMMDD = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+// function to format the date into YYYY-MM-DDTHH-MM 
 export const formatDateToYYYYMMDDTHHMM = (date) => {
   const inputDate = new Date(date);
 

@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+// set the header before fetching the api
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BACKEND_URL,
   prepareHeaders: (headers, { getState }) => {
@@ -10,11 +11,13 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
+// setting the base url and headers for necessary fetching using rtk query
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
   return result;
 };
 
+// create the mutation and query for fetching the appointment apis
 export const appointmentApi = createApi({
   reducerPath: "appointmentApi",
   tagTypes: ["appointments"],
@@ -32,7 +35,7 @@ export const appointmentApi = createApi({
           
         },
       }),
-      invalidatesTags: ["todos"],
+      invalidatesTags: ["appointments"],
     }),
     updateAppointment: builder.mutation({
       query: ({ id, title, status, startTime, endTime }) => ({
@@ -45,28 +48,28 @@ export const appointmentApi = createApi({
           endTime
         },
       }),
-      invalidatesTags: ["todos"],
+      invalidatesTags: ["appointments"],
     }),
     getSingleAppointment: builder.query({
       query: ({ id }) => ({
         url: `/appointment/${id}`,
         method: "GET",
       }),
-      providesTags: ["todos"],
+      providesTags: ["appointments"],
     }),
     getAllAppointments: builder.query({
       query: () => ({
         url: `/appointment`,
         method: "GET",
       }),
-      providesTags: ["todos"],
+      providesTags: ["appointments"],
     }),
     deleteAppointment: builder.mutation({
       query: ({ id }) => ({
         url: `/appointment/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["todos"],
+      invalidatesTags: ["appointments"],
     }),
   }),
 });

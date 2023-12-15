@@ -12,7 +12,7 @@ const verifyToken =asyncHandler(async (req, res, next) => {
     // read authorization key from header
     const header = req.headers["authorization"];
 
-    // retrieve the toke
+    // retrieve the token
     const token = header ? header.split(" ")[1] : null;
 
   

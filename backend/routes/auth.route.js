@@ -3,9 +3,6 @@ const router = express.Router();
 const authController = require("../controllers/auth.controller");
 const isAuthenticate = require("../middlewares/auth.middleware");
 const authValidator = require("../validators/auth.validator");
-require("../utils/googleAuth.utils");
-const passport = require("passport");
-const config = require("../config/config");
 
 router.post(
   "/signup",
@@ -35,25 +32,19 @@ router.post(
   authController.userResetPassword
 );
 
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["email", "profile"] })
-);
 
-router.get(
-  "/google/callback",
-  passport.authenticate(
-    "google",
-    {
-      failureRedirect: "http://localhost:1010/api/auth/google/failure"
-    }
-  ),(req, res) => {
-    return res.json(req.user)
-}
-);
+router.get("/google", authController.googleAuth);
 
-router.get("/google/success",  authController.googleAuthSuccess);
+router.get("/google/callback", authController.googleAuthRedirect);
 
-router.get("/google/failure", authController.googleAuthFailure);
+router.get("/google/oauthuser", authController.googleOauthUser);
+
+router.get("/google/contacts", authController.googleContacts);
+
+router.post("/google/calendar/insert", authController.createGoogleCalendarEvent);
+
+router.delete("/google/calendar/delete/:id", authController.deleteGoogleCalendarEvent);
+
+router.patch("/google/calendar/update/:id", authController.updateGoogleCalendarEvent );
 
 module.exports = router;

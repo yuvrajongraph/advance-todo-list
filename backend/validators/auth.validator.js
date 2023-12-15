@@ -10,6 +10,7 @@ const name = Joi.string()
   .required();
   const oldPassword = Joi.string().min(3).max(30).required();
   const newPassword = Joi.string().min(3).max(30).required();
+  const url = Joi.string()
 
 // schema of user signup api in request body for validation using joi
 const userSignUpSchema = async (req, res, next) => {
@@ -17,6 +18,7 @@ const userSignUpSchema = async (req, res, next) => {
     name,
     email,
     password,
+    url
   });
   validateRequest(req, res, next, schema, "body");
 };
@@ -29,6 +31,7 @@ const userSignInSchema = async (req, res, next) => {
   });
   validateRequest(req, res, next, schema, "body");
 };
+
 
 const userResetPasswordSchema = async (req, res, next) => {
   const schema = Joi.object({
