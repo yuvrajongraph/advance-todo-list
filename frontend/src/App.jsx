@@ -5,35 +5,37 @@ import Register from "./components/Register/Register";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-//import PageNotFound from "./components/PageNotFound/PageNotFound";
+import PageNotFound from "./components/PageNotFound/PageNotFound";
 import AuthBackground from "./components/AuthBackground/AuthBackground";
 import { withCookies } from "react-cookie";
 import useAuth from "./hooks/useAuth";
-//import RegisterVerification from "./components/RegisterVerification/RegisterVerification";
-//import ResetPassword from "./components/ResetPassword/ResetPassword";
+import RegisterVerification from "./components/RegisterVerification/RegisterVerification";
+import ResetPassword from "./components/ResetPassword/ResetPassword";
 import AppLayout from "./components/AppLayout/AppLayout";
 import BigCalendar from "./components/BigCalendar/BigCalendar";
-//import UpdateEventScreen from "./components/EventCard/UpdateEventScreen";
-//import Profile from "./components/Profile/Profile";
+import UpdateEventScreen from "./components/EventCard/UpdateEventScreen";
+import Profile from "./components/Profile/Profile";
 import io from "socket.io-client";
 import GoogleRedirect from "./components/Google/GoogleRedirect";
-//import GoogleContact from "./components/Google/GoogleContact";
+import GoogleContact from "./components/Google/GoogleContact";
 import ErrorFallback from "./components/ErrorFallback/ErrorFallback";
 import { ErrorBoundary } from "react-error-boundary";
-const Profile = lazy(() => import("./components/Profile/Profile"));
-const UpdateEventScreen = lazy(() =>
-  import("./components/EventCard/UpdateEventScreen")
-);
-const GoogleContact = lazy(() => import("./components/Google/GoogleContact"));
-const PageNotFound = lazy(() =>
-  import("./components/PageNotFound/PageNotFound")
-);
-const RegisterVerification = lazy(() =>
-  import("./components/RegisterVerification/RegisterVerification")
-);
-const ResetPassword = lazy(() =>
-  import("./components/ResetPassword/ResetPassword")
-);
+
+
+//const Profile = lazy(() => import("./components/Profile/Profile"));
+// const UpdateEventScreen = lazy(() =>
+//   import("./components/EventCard/UpdateEventScreen")
+// );
+//const GoogleContact = lazy(() => import("./components/Google/GoogleContact"));
+// const PageNotFound = lazy(() =>
+//   import("./components/PageNotFound/PageNotFound")
+// );
+// const RegisterVerification = lazy(() =>
+//   import("./components/RegisterVerification/RegisterVerification")
+// );
+// const ResetPassword = lazy(() =>
+//   import("./components/ResetPassword/ResetPassword")
+// );
 
 function App() {
   const [authenticated, cookie] = useAuth();
