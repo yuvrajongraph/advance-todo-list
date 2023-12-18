@@ -1,4 +1,4 @@
-import defaultImage from "../../assets/noprofilepicture.webp";
+import defaultImage from "../../images/noprofilepicture.webp";
 import { Button } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useGetSingleUserMutation } from "../../redux/user/userApi";
