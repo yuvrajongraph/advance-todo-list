@@ -7,7 +7,7 @@ import {
   formatDateToYYYYMMDDTHHMM,
 } from "../../utils/dateConversion";
 import CustomModal from "../CustomModal/CustomModal";
-import EventCard from "../EventCard/EventCard";
+//import EventCard from "../EventCard/EventCard";
 import EventContext from "../../Context/Event/EventContext";
 import { compareIst } from "../../utils/compareIst";
 import { styled } from "@mui/material";
@@ -17,9 +17,7 @@ import ContactContext from "../../Context/Contact/ContactContext";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallback from "../ErrorFallback/ErrorFallback";
 const localizer = momentLocalizer(moment);
-
-
-//const EventCard = lazy(() => import("../EventCard/EventCard"));
+const EventCard = lazy(() => import("../EventCard/EventCard"));
 
 const BigCalendar = () => {
   const [events, setEvents] = useState([]);
