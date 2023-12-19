@@ -9,8 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import AuthBackground from "./components/AuthBackground/AuthBackground";
 import { withCookies } from "react-cookie";
 import useAuth from "./hooks/useAuth";
-//import RegisterVerification from "./components/RegisterVerification/RegisterVerification";
-//import ResetPassword from "./components/ResetPassword/ResetPassword";
+import RegisterVerification from "./components/RegisterVerification/RegisterVerification";
+import ResetPassword from "./components/ResetPassword/ResetPassword";
 import AppLayout from "./components/AppLayout/AppLayout";
 import BigCalendar from "./components/BigCalendar/BigCalendar";
 //import UpdateEventScreen from "./components/EventCard/UpdateEventScreen";
@@ -28,12 +28,12 @@ const GoogleContact = lazy(() => import("./components/Google/GoogleContact"));
 const PageNotFound = lazy(() =>
   import("./components/PageNotFound/PageNotFound")
 );
-const RegisterVerification = lazy(() =>
-  import("./components/RegisterVerification/RegisterVerification")
-);
-const ResetPassword = lazy(() =>
-  import("./components/ResetPassword/ResetPassword")
-);
+// const RegisterVerification = lazy(() =>
+//   import("./components/RegisterVerification/RegisterVerification")
+// );
+// const ResetPassword = lazy(() =>
+//   import("./components/ResetPassword/ResetPassword")
+// );
 
 function App() {
   const [authenticated, cookie] = useAuth();
