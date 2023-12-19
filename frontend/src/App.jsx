@@ -1,4 +1,4 @@
-import {  useEffect,  Suspense, lazy } from "react";
+import { useEffect, Suspense, lazy } from "react";
 import "./App.css";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
@@ -9,14 +9,14 @@ import "react-toastify/dist/ReactToastify.css";
 import AuthBackground from "./components/AuthBackground/AuthBackground";
 import { withCookies } from "react-cookie";
 import useAuth from "./hooks/useAuth";
-import RegisterVerification from "./components/RegisterVerification/RegisterVerification";
-import ResetPassword from "./components/ResetPassword/ResetPassword";
+//import RegisterVerification from "./components/RegisterVerification/RegisterVerification";
+//import ResetPassword from "./components/ResetPassword/ResetPassword";
 import AppLayout from "./components/AppLayout/AppLayout";
 import BigCalendar from "./components/BigCalendar/BigCalendar";
 //import UpdateEventScreen from "./components/EventCard/UpdateEventScreen";
 //import Profile from "./components/Profile/Profile";
 import io from "socket.io-client";
-import GoogleRedirect from "./components/Google/GoogleRedirect";
+//import GoogleRedirect from "./components/Google/GoogleRedirect";
 //import GoogleContact from "./components/Google/GoogleContact";
 import ErrorFallback from "./components/ErrorFallback/ErrorFallback";
 import { ErrorBoundary } from "react-error-boundary";
@@ -25,15 +25,16 @@ const UpdateEventScreen = lazy(() =>
   import("./components/EventCard/UpdateEventScreen")
 );
 const GoogleContact = lazy(() => import("./components/Google/GoogleContact"));
+const GoogleRedirect = lazy(() => import("./components/Google/GoogleRedirect"));
 const PageNotFound = lazy(() =>
   import("./components/PageNotFound/PageNotFound")
 );
-// const RegisterVerification = lazy(() =>
-//   import("./components/RegisterVerification/RegisterVerification")
-// );
-// const ResetPassword = lazy(() =>
-//   import("./components/ResetPassword/ResetPassword")
-// );
+const RegisterVerification = lazy(() =>
+  import("./components/RegisterVerification/RegisterVerification")
+);
+const ResetPassword = lazy(() =>
+  import("./components/ResetPassword/ResetPassword")
+);
 
 function App() {
   const [authenticated, cookie] = useAuth();
@@ -73,10 +74,13 @@ function App() {
             <Route
               path="/update/:type"
               element={
-                <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=>{}}>
-                <Suspense fallback={<div>Loading....</div>}>
-                  <UpdateEventScreen />
-                </Suspense>
+                <ErrorBoundary
+                  FallbackComponent={ErrorFallback}
+                  onReset={() => {}}
+                >
+                  <Suspense fallback={<div>Loading....</div>}>
+                    <UpdateEventScreen />
+                  </Suspense>
                 </ErrorBoundary>
               }
             />
@@ -84,10 +88,13 @@ function App() {
             <Route
               path="/profile"
               element={
-                <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=>{}}>
-                <Suspense fallback={<div>Loading....</div>}>
-                  <Profile userDetail={cookie.userData.details} />
-                </Suspense>
+                <ErrorBoundary
+                  FallbackComponent={ErrorFallback}
+                  onReset={() => {}}
+                >
+                  <Suspense fallback={<div>Loading....</div>}>
+                    <Profile userDetail={cookie.userData.details} />
+                  </Suspense>
                 </ErrorBoundary>
               }
             />
@@ -95,10 +102,13 @@ function App() {
             <Route
               path="/contact"
               element={
-                <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=>{}}>
-                <Suspense fallback={<div>Loading....</div>}>
-                  <GoogleContact />{" "}
-                </Suspense>
+                <ErrorBoundary
+                  FallbackComponent={ErrorFallback}
+                  onReset={() => {}}
+                >
+                  <Suspense fallback={<div>Loading....</div>}>
+                    <GoogleContact />{" "}
+                  </Suspense>
                 </ErrorBoundary>
               }
             />
@@ -106,7 +116,14 @@ function App() {
         ) : (
           <Route path="/" element={<Navigate to={"/auth/login"} />} />
         )}
-        <Route path="/google" element={<GoogleRedirect />} />
+        <Route
+          path="/google"
+          element={
+            <Suspense fallback={<div>Loading....</div>}>
+              <GoogleRedirect />
+            </Suspense>
+          }
+        />
         <Route path="/auth" element={<AuthBackground />}>
           {authenticated ? (
             <Route path="login" element={<Navigate to={"/"} />} />
@@ -123,10 +140,10 @@ function App() {
         <Route
           path="/auth/signup"
           element={
-            <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=>{}}>
-            <Suspense fallback={<div>Loading....</div>}>
-              <RegisterVerification />
-            </Suspense>
+            <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => {}}>
+              <Suspense fallback={<div>Loading....</div>}>
+                <RegisterVerification />
+              </Suspense>
             </ErrorBoundary>
           }
         />
@@ -134,10 +151,10 @@ function App() {
         <Route
           path="/auth/reset-password"
           element={
-            <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=>{}}>
-            <Suspense fallback={<div>Loading....</div>}>
-              <ResetPassword />
-            </Suspense>
+            <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => {}}>
+              <Suspense fallback={<div>Loading....</div>}>
+                <ResetPassword />
+              </Suspense>
             </ErrorBoundary>
           }
         />
@@ -145,10 +162,10 @@ function App() {
         <Route
           path="*"
           element={
-            <ErrorBoundary FallbackComponent={ErrorFallback} onReset={()=>{}}>
-            <Suspense fallback={<div>Loading....</div>}>
-              <PageNotFound />
-            </Suspense>
+            <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => {}}>
+              <Suspense fallback={<div>Loading....</div>}>
+                <PageNotFound />
+              </Suspense>
             </ErrorBoundary>
           }
         />
