@@ -67,7 +67,7 @@ app.use("/health", async (req, res) => {
 });
 
 app.get('/',(req,res)=>{
-  return res.render("googleAuth");
+  return  res.send({ message: "Home get Page" });
 })
 
 // app.get(`/verify-signup/${authController.randomToken}`,(req,res)=>{
