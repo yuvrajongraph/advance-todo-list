@@ -57,12 +57,11 @@ export const appointmentApi = createApi({
       }),
       providesTags: ["appointments"],
     }),
-    getAllAppointments: builder.query({
+    getAllAppointments: builder.mutation({
       query: () => ({
         url: `/appointment`,
         method: "GET",
       }),
-      providesTags: ["appointments"],
     }),
     deleteAppointment: builder.mutation({
       query: ({ id }) => ({
@@ -78,6 +77,6 @@ export const {
   useCreateAppointmentMutation,
   useUpdateAppointmentMutation,
   useDeleteAppointmentMutation,
-  useGetAllAppointmentsQuery,
+  useGetAllAppointmentsMutation,
   useGetSingleAppointmentQuery,
 } = appointmentApi;

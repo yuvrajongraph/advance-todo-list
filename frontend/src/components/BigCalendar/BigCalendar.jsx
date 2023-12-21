@@ -2,7 +2,7 @@ import { useEffect, useState, useContext, lazy, Suspense } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import { useGetAllTodoItemsMutation } from "../../redux/todo/todoApi";
-import { useGetAllAppointmentsQuery } from "../../redux/appointment/appointmentApi";
+import { useGetAllAppointmentsMutation } from "../../redux/appointment/appointmentApi";
 import {
   formatDateToYYYYMMDDTHHMM,
 } from "../../utils/dateConversion";
@@ -30,7 +30,7 @@ const BigCalendar = () => {
   const [isEventOpen, setIsEventOpen] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
   const [getAllTodoItems] = useGetAllTodoItemsMutation();
-  const getAllAppointments = useGetAllAppointmentsQuery();
+  const [getAllAppointments] = useGetAllAppointmentsMutation();
   const { contactName } = useContext(ContactContext);
   const contactTitle = contactName !== "" ? `${contactName}'s birthday` : "";
   const [todoArray,setTodoArray] = useState([]);
@@ -139,7 +139,7 @@ const BigCalendar = () => {
 
   // for getting all the appointment events on the calendar when intial renders
   const getAppointmentEvents = async () => {
-    const response = await getAllAppointments.refetch();
+    const response = await getAllAppointments();
     const eventArray = response?.data?.data?.map((item) => {
       const event = {
         start: moment(new Date(item?.startTime)).toDate(),
