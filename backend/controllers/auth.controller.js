@@ -360,7 +360,7 @@ const googleOauthUser = asyncHandler(async(req,res)=>{
       res,
       null,
       404,
-      "Please, Sync with the Google first to see your contacts"
+      "Please, Sync with the Google first to see your profile"
     );
   }
   const oauth2 = google.oauth2({ version: "v2", auth: oauth2Client });
