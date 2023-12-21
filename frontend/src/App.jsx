@@ -16,7 +16,7 @@ import BigCalendar from "./components/BigCalendar/BigCalendar";
 //import UpdateEventScreen from "./components/EventCard/UpdateEventScreen";
 //import Profile from "./components/Profile/Profile";
 import io from "socket.io-client";
-//import GoogleRedirect from "./components/Google/GoogleRedirect";
+import GoogleRedirect from "./components/Google/GoogleRedirect";
 //import GoogleContact from "./components/Google/GoogleContact";
 import ErrorFallback from "./components/ErrorFallback/ErrorFallback";
 import { ErrorBoundary } from "react-error-boundary";
@@ -25,7 +25,7 @@ const UpdateEventScreen = lazy(() =>
   import("./components/EventCard/UpdateEventScreen")
 );
 const GoogleContact = lazy(() => import("./components/Google/GoogleContact"));
-const GoogleRedirect = lazy(() => import("./components/Google/GoogleRedirect"));
+//const GoogleRedirect = lazy(() => import("./components/Google/GoogleRedirect"));
 const PageNotFound = lazy(() =>
   import("./components/PageNotFound/PageNotFound")
 );
@@ -116,14 +116,7 @@ function App() {
         ) : (
           <Route path="/" element={<Navigate to={"/auth/login"} />} />
         )}
-        <Route
-          path="/google"
-          element={
-            <Suspense fallback={<div>Loading....</div>}>
-              <GoogleRedirect />
-            </Suspense>
-          }
-        />
+        <Route path="/google" element={<GoogleRedirect />} />
         <Route path="/auth" element={<AuthBackground />}>
           {authenticated ? (
             <Route path="login" element={<Navigate to={"/"} />} />
