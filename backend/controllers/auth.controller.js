@@ -346,9 +346,11 @@ const googleAuthRedirect = asyncHandler(async(req,res)=>{
   // Set access token to authorize API requests
   oauth2Client.setCredentials(tokens);
   
-  // eslint-disable-next-line no-console
-  console.log(oauth2Client)
   
+  return res.json({
+    message: oauth2Client
+  })
+
   return res.redirect(
     `${config.FRONTEND_URL}/google?oauth2Client=${JSON.stringify(oauth2Client)}`
   );
