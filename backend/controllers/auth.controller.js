@@ -347,10 +347,6 @@ const googleAuthRedirect = asyncHandler(async(req,res)=>{
   oauth2Client.setCredentials(tokens);
   
   
-  return res.json({
-    message: oauth2Client
-  })
-
   return res.redirect(
     `${config.FRONTEND_URL}/google?oauth2Client=${JSON.stringify(oauth2Client)}`
   );
@@ -359,7 +355,7 @@ const googleAuthRedirect = asyncHandler(async(req,res)=>{
 
 const googleOauthUser = asyncHandler(async(req,res)=>{
   // Manual syncing with google account
-  if (!oauth2Client.credentials.refresh_token) {
+  if (!oauth2Client.credentials.access_token) {
     return commonErrorHandler(
       req,
       res,
@@ -402,7 +398,7 @@ const googleOauthUser = asyncHandler(async(req,res)=>{
 
 const googleContacts = asyncHandler(async(req,res)=>{
   // Manual syncing with google account
-  if (!oauth2Client.credentials.refresh_token) {
+  if (!oauth2Client.credentials.access_token) {
     return commonErrorHandler(
       req,
       res,
@@ -442,7 +438,7 @@ const calendar = google.calendar({
 
 const createGoogleCalendarEvent = asyncHandler(async(req,res)=>{
   // Manual syncing with google account
-  if (!oauth2Client.credentials.refresh_token) {
+  if (!oauth2Client.credentials.access_token) {
     return commonErrorHandler(
       req,
       res,
@@ -489,7 +485,7 @@ const createGoogleCalendarEvent = asyncHandler(async(req,res)=>{
 
 const deleteGoogleCalendarEvent = asyncHandler(async(req,res)=>{
   // Manual syncing with google account
-  if (!oauth2Client.credentials.refresh_token) {
+  if (!oauth2Client.credentials.access_token) {
     return commonErrorHandler(
       req,
       res,
@@ -524,7 +520,7 @@ const deleteGoogleCalendarEvent = asyncHandler(async(req,res)=>{
 
 const updateGoogleCalendarEvent = asyncHandler(async(req,res)=>{
   // Manual syncing with google account
-  if (!oauth2Client.credentials.refresh_token) {
+  if (!oauth2Client.credentials.access_token) {
     return commonErrorHandler(
       req,
       res,
